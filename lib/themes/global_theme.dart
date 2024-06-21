@@ -18,7 +18,7 @@ class GlobalThemData {
   }
 
   static const ColorScheme lightColorScheme = ColorScheme(
-    primary: Color(0xFFB93C5D),
+    primary: Color.fromARGB(255, 148, 155, 236),
     onPrimary: Colors.black,
     secondary: Color(0xFFEFF3F3),
     onSecondary: Color(0xFF322942),
@@ -31,7 +31,7 @@ class GlobalThemData {
     brightness: Brightness.light,
   );
   static const ColorScheme darkColorScheme = ColorScheme(
-    primary: Color(0xFFFF8383),
+    primary: Color.fromARGB(255, 46, 55, 82),
     secondary: Color(0xFF4D1F7C),
     background: Color(0xFF241E30),
     surface: Color(0xFF1F1929),

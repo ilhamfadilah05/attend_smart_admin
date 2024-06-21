@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class TextGlobal extends StatelessWidget {
   TextGlobal(
@@ -34,9 +33,10 @@ class TextGlobal extends StatelessWidget {
       textAlign: textAlign ?? TextAlign.left,
       overflow: textOverflow ?? TextOverflow.clip,
       maxLines: maxLines ?? 100,
-      style: GoogleFonts.quicksand(
+      style: TextStyle(
+          fontFamily: 'quicksand',
           fontStyle: styleText ?? FontStyle.normal,
-          fontSize: fontSize ?? 14.0,
+          fontSize: fontSize ?? 12.0,
           color: colorText,
           decoration: underline ?? TextDecoration.none,
           fontWeight: fontWeight ?? FontWeight.normal),

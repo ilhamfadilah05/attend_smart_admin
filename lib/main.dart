@@ -1,7 +1,9 @@
+import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
 import 'package:attend_smart_admin/bloc/login/login_bloc.dart';
 import 'package:attend_smart_admin/bloc/login/obscure_cubit.dart';
 import 'package:attend_smart_admin/bloc/session/session_cubit.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
+import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:attend_smart_admin/repository/login/login_repository.dart';
 import 'package:attend_smart_admin/routes/router.dart';
 import 'package:attend_smart_admin/themes/global_theme.dart';
@@ -38,6 +40,9 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ObscureCubit()),
           BlocProvider(
               create: (context) => LoginBloc(loginRepo: LoginRepository())),
+          BlocProvider(create: (context) => EmployeeBloc(EmployeeRepository())),
+          BlocProvider(
+              create: (context) => CreateEmployeeBloc(EmployeeRepository())),
         ],
         child: BlocBuilder<ThemeCubit, bool>(
           builder: (context, state) {

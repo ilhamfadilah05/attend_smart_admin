@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 class NavbarModel {
   NavbarModel(
-      {required this.key,
-      required this.title,
+      {required this.name,
+      required this.label,
       required this.href,
       required this.icon});
 
-  String key;
-  String title;
+  String name;
+  String label;
   String href;
   IconData icon;
 
   factory NavbarModel.fromJson(Map<String, dynamic> json) => NavbarModel(
-      key: json["key"],
-      title: json["title"],
+      name: json["name"],
+      label: json["label"],
       href: json["href"],
       icon: json["icon"]);
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/repository/login/login_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -16,30 +17,33 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
   Future mapEventToState(LoginEvent event, Emitter<LoginState> emit) async {
     if (event is LoginEmailChanged) {
-      emit(state.copyWith(email: event.email));
+      emit(state.copyWith(
+          email: event.email, formStatus: const InitialFormStatus()));
     } else if (event is LoginPasswordChanged) {
-      emit(state.copyWith(password: event.password));
+      emit(state.copyWith(
+          password: event.password, formStatus: const InitialFormStatus()));
     } else if (event is LoginSubmitted) {
       emit(state.copyWith(formStatus: SubmissionLoading()));
       try {
         var result = await loginRepo?.login(
-            event: LoginBloc(loginRepo: loginRepo), email: event.email);
+            password: event.password,
+            email: event.email,
+            state: state,
+            emit: emit);
         if (result != null) {
-          emit(state.copyWith(formStatus: SubmissionSuccess()));
-        } else {
+          AccountModel account = AccountModel.fromJson(result[0].data());
           emit(state.copyWith(
-              formStatus: SubmissionFailed(errorMessage: 'adsasd')));
+            formStatus: SubmissionSuccess(),
+            account: account,
+          ));
         }
       } catch (e) {
         emit(state.copyWith(
-            formStatus: SubmissionFailed(errorMessage: e.toString())));
+            formStatus: SubmissionFailed(), errorMessage: e.toString()));
       }
     } else if (event is LogoutSubmitted) {
       emit(state.copyWith(
           email: null, password: null, formStatus: const InitialFormStatus()));
-    } else if (event is LoginFailed) {
-      emit(state.copyWith(
-          formStatus: SubmissionFailed(errorMessage: event.message)));
     }
   }
 }

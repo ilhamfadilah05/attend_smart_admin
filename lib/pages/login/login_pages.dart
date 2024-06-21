@@ -95,7 +95,7 @@ class _LoginPagesState extends State<LoginPages> {
                 ],
               ),
               const SizedBox(
-                height: 40,
+                height: 100,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

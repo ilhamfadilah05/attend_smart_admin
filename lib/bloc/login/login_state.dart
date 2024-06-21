@@ -11,27 +11,35 @@ class LoginState extends Equatable {
   bool get isValidPassword => password.length >= 6;
 
   final FormSubmissionStatus formStatus;
+  final String errorMessage;
+  final AccountModel? account; // Tetap nullable
 
-  const LoginState({
-    this.email = '',
-    this.password = '',
-    this.formStatus = const InitialFormStatus(),
-  });
+  const LoginState(
+      {this.email = '',
+      this.password = '',
+      this.formStatus = const InitialFormStatus(),
+      this.errorMessage = '',
+      this.account});
 
   LoginState copyWith({
     String? email,
     String? password,
     FormSubmissionStatus? formStatus,
+    String? errorMessage,
+    AccountModel? account,
   }) {
     return LoginState(
       email: email ?? this.email,
       password: password ?? this.password,
       formStatus: formStatus ?? this.formStatus,
+      errorMessage: errorMessage ?? this.errorMessage,
+      account: account ?? this.account,
     );
   }
 
   @override
-  List<Object> get props => [email, password, formStatus];
+  List<Object?> get props =>
+      [email, password, formStatus, errorMessage, account];
 }
 
 abstract class FormSubmissionStatus {
@@ -48,13 +56,7 @@ class SubmissionLoading extends FormSubmissionStatus {}
 
 class SubmissionSuccess extends FormSubmissionStatus {}
 
-class SubmissionFailed extends FormSubmissionStatus {
-  final String errorMessage;
-
-  SubmissionFailed({required this.errorMessage});
-
-  List<Object> get props => [errorMessage];
-}
+class SubmissionFailed extends FormSubmissionStatus {}
 
 // @immutable
 // sealed class LoginState {}

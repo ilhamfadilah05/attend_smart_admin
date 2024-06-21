@@ -1,7 +1,10 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
+import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ButtonGlobal extends StatelessWidget {
   ButtonGlobal(
@@ -20,16 +23,21 @@ class ButtonGlobal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            backgroundColor: colorBtn,
-            padding: padding ?? const EdgeInsets.symmetric(horizontal: 60),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-        onPressed: onPressed,
-        child: TextGlobal(
-          message: message,
-          colorText: colorText,
-        ));
+    return BlocBuilder<ThemeCubit, bool>(
+      builder: (context, state) {
+        return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: colorBtn ?? blueDefaultLight,
+                padding: padding ??
+                    const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5))),
+            onPressed: onPressed,
+            child: TextGlobal(
+              message: message,
+              colorText: state ? Colors.black : Colors.white,
+            ));
+      },
+    );
   }
 }
