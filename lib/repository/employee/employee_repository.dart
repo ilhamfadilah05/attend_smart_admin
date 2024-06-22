@@ -142,6 +142,7 @@ class EmployeeRepository {
     try {
       var result =
           await firestore.collection('employee').add(employee.toJson());
+
       return result.get();
     } catch (e) {
       return e.toString();

@@ -2,6 +2,7 @@
 
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'global_text_component.dart';
@@ -45,6 +46,11 @@ class FormGlobal extends StatelessWidget {
                 onChanged: onChanged,
                 validator: validator,
                 keyboardType: keyboardType,
+                inputFormatters: keyboardType == TextInputType.number
+                    ? <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ]
+                    : null,
                 decoration: InputDecoration(
                     errorStyle:
                         const TextStyle(fontFamily: 'quicksand', fontSize: 12),

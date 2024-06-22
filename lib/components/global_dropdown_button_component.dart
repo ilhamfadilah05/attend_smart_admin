@@ -38,8 +38,11 @@ class DropdownGlobal extends StatelessWidget {
                   TextGlobal(
                     message: title!,
                     colorText: colorTextTitle ?? Colors.black,
-                    fontSize: fontSizeTitle ?? 14,
+                    fontSize: fontSizeTitle ?? 12,
                   ),
+                  const SizedBox(
+                    height: 5,
+                  )
                 ],
               ),
         Container(

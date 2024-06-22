@@ -1,9 +1,7 @@
-import 'package:attend_smart_admin/bloc/login/login_bloc.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
 import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 part 'employee_event.dart';
 part 'employee_state.dart';
 
@@ -31,19 +29,24 @@ class CreateEmployeeBloc
     on<CreateEmployeeEvent>((event, emit) async {
       if (event is CreateEmployeeChangedEvent) {
         emit(state.copyWith(
-            employee: event.employeeData,
-            formStatus: const InitialFormStatus()));
+          employee: event.employeeData,
+        ));
       } else if (event is CreateEmployeeAddedEvent) {
-        emit(state.copyWith(formStatus: SubmissionLoading()));
         try {
           var result =
               await employeeRepo.addEmployee(employee: state.employee!);
-          if (result != null) {
-            emit(state.copyWith(formStatus: SubmissionSuccess()));
+
+          if (result.runtimeType == String) {
+            emit(state.copyWith(
+                errorMessage: state.errorMessage,
+                formStatus: SubmissionFailed()));
+          } else {
+            emit(state.copyWith(
+                employee: state.employee, formStatus: SubmissionSuccess()));
           }
         } catch (e) {
           emit(state.copyWith(
-              formStatus: SubmissionFailed(), errorMessage: e.toString()));
+              errorMessage: e.toString(), formStatus: SubmissionFailed()));
         }
       }
     });

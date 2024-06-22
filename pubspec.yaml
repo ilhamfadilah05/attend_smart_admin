@@ -45,6 +45,9 @@ dependencies:
   cloud_firestore: ^5.0.1
   elegant_notification: ^2.2.0
   number_pagination: ^1.0.6
+  image_picker: ^1.1.2
+  image_picker_web: ^4.0.0
+  google_mlkit_face_detection: ^0.5.0
 
 dev_dependencies:
   flutter_test:
