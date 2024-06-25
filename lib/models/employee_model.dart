@@ -11,7 +11,7 @@ class EmployeeModel {
   String? address;
   String? remainingCuti;
   String? totalCuti;
-  String? workingPosition;
+  String? department;
   String? workingStatus;
   String? image;
 
@@ -28,7 +28,7 @@ class EmployeeModel {
     this.address,
     this.remainingCuti,
     this.totalCuti,
-    this.workingPosition,
+    this.department,
     this.workingStatus,
     this.image,
   });
@@ -46,7 +46,7 @@ class EmployeeModel {
     String? address,
     String? remainingCuti,
     String? totalCuti,
-    String? workingPosition,
+    String? department,
     String? workingStatus,
     String? image,
   }) {
@@ -63,7 +63,7 @@ class EmployeeModel {
       address: address ?? this.address,
       remainingCuti: remainingCuti ?? this.remainingCuti,
       totalCuti: totalCuti ?? this.totalCuti,
-      workingPosition: workingPosition ?? this.workingPosition,
+      department: department ?? this.department,
       workingStatus: workingStatus ?? this.workingStatus,
       image: image ?? this.image,
     );
@@ -83,7 +83,7 @@ class EmployeeModel {
       address: json['address'],
       remainingCuti: json['remaining_cuti'],
       totalCuti: json['total_cuti'],
-      workingPosition: json['working_position'],
+      department: json['department'],
       workingStatus: json['working_status'],
       image: json['image'],
     );
@@ -103,7 +103,7 @@ class EmployeeModel {
       'address': address,
       'remaining_cuti': remainingCuti,
       'total_cuti': totalCuti,
-      'working_position': workingPosition,
+      'department': department,
       'working_status': workingStatus,
       'image': image,
     };

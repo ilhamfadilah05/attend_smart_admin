@@ -13,11 +13,13 @@ class FormGlobal extends StatelessWidget {
       this.title,
       this.onChanged,
       this.validator,
-      this.keyboardType});
+      this.keyboardType,
+      this.controller});
   String? title;
   Function(String)? onChanged;
   String? Function(String?)? validator;
   TextInputType? keyboardType;
+  TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,7 @@ class FormGlobal extends StatelessWidget {
                     fontFamily: 'quicksand',
                     fontSize: 12,
                     color: stateTheme ? Colors.white : Colors.black),
+                controller: controller,
                 onChanged: onChanged,
                 validator: validator,
                 keyboardType: keyboardType,

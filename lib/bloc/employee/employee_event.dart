@@ -19,6 +19,7 @@ class EmployeeLoadedEvent extends EmployeeEvent {
   List<Object> get props => [startData, lastData];
 }
 
+
 // Create Employee Event
 
 sealed class CreateEmployeeEvent extends Equatable {
@@ -34,10 +35,12 @@ class CreateEmployeeLoadingEvent extends CreateEmployeeEvent {}
 
 class CreateEmployeeAddedEvent extends CreateEmployeeEvent {
   final EmployeeModel employeeData;
-  const CreateEmployeeAddedEvent({required this.employeeData});
+  final AccountModel accountData;
+  const CreateEmployeeAddedEvent(
+      {required this.employeeData, required this.accountData});
 
   @override
-  List<Object> get props => [employeeData];
+  List<Object> get props => [employeeData, accountData];
 }
 
 class CreateEmployeeChangedEvent extends CreateEmployeeEvent {
@@ -54,4 +57,14 @@ class CreateEmplyeeErrorEvent extends CreateEmployeeEvent {
 
   @override
   List<Object> get props => [message];
+}
+
+
+class CreateEmployeeByIdEvent extends CreateEmployeeEvent {
+  final String id;
+
+  const CreateEmployeeByIdEvent({required this.id});
+
+  @override
+  List<Object> get props => [id];
 }

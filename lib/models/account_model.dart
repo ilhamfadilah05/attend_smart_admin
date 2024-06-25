@@ -24,9 +24,9 @@ class AccountModel {
         name: json['name'],
         email: json['email'],
         password: json['password'],
-        idCompany: json['idCompany'],
-        nameCompany: json['nameCompany'],
-        createdAt: json['createdAt'],
+        idCompany: json['id_company'],
+        nameCompany: json['name_company'],
+        createdAt: json['created_at'],
         role: json['role']);
   }
 

@@ -1,7 +1,9 @@
+import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 List<TableCell> listHeaderTableEmployee = [
@@ -26,6 +28,10 @@ List<TableCell> listHeaderTableEmployee = [
   TableCell(
       child: Container(
           padding: const EdgeInsets.all(10),
+          child: TextGlobal(message: 'Cabang', fontWeight: FontWeight.bold))),
+  TableCell(
+      child: Container(
+          padding: const EdgeInsets.all(10),
           child: TextGlobal(message: 'Status', fontWeight: FontWeight.bold))),
   TableCell(
       child: Container(
@@ -39,7 +45,8 @@ List<TableCell> listHeaderTableEmployee = [
   ))
 ];
 
-Future<List<TableRow>> listDataTableEmployee(List<EmployeeModel> data) async {
+Future<List<TableRow>> listDataTableEmployee(
+    List<EmployeeModel> data, BuildContext context) async {
   return List.generate(data.length, (index) {
     var dataEmployee = data[index];
     return TableRow(children: [
@@ -65,7 +72,13 @@ Future<List<TableRow>> listDataTableEmployee(List<EmployeeModel> data) async {
       TableCell(
         child: Container(
           padding: const EdgeInsets.all(10),
-          child: TextGlobal(message: dataEmployee.workingPosition ?? '-'),
+          child: TextGlobal(message: dataEmployee.department ?? '-'),
+        ),
+      ),
+      TableCell(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          child: TextGlobal(message: dataEmployee.nameBranch ?? '-'),
         ),
       ),
       TableCell(
@@ -80,7 +93,9 @@ Future<List<TableRow>> listDataTableEmployee(List<EmployeeModel> data) async {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.go('/karyawan/edit?id=${dataEmployee.id}');
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
@@ -98,7 +113,17 @@ Future<List<TableRow>> listDataTableEmployee(List<EmployeeModel> data) async {
                   width: 10,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    dialogQuestion(context,
+                        onTapYes: () {},
+                        icon: const Icon(
+                          Iconsax.trash_bold,
+                          color: Colors.red,
+                          size: 100,
+                        ),
+                        message:
+                            'Apakah anda yakin ingin menghapus ${dataEmployee.name}?');
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
@@ -138,12 +163,32 @@ class EmployeeRepository {
     }
   }
 
+  Future getEmployeeById({required String id}) async {
+    try {
+      var result = await firestore.collection('employee').doc(id).get();
+      var data = result.data();
+      return data;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future addEmployee({required EmployeeModel employee}) async {
     try {
-      var result =
-          await firestore.collection('employee').add(employee.toJson());
+      await firestore
+          .collection('employee')
+          .doc(employee.id)
+          .set(employee.toJson());
 
-      return result.get();
+      return employee.toJson();
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future deleteEmployee({required String id}) async {
+    try {
+      await firestore.collection('employee').doc(id).delete();
     } catch (e) {
       return e.toString();
     }

@@ -2,17 +2,22 @@
 
 import 'dart:convert';
 
+import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
+import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
 import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_dropdown_button_component.dart';
 import 'package:attend_smart_admin/components/global_form_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
+import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
 import 'package:attend_smart_admin/models/facefeatures_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker_web/image_picker_web.dart';
 
@@ -22,17 +27,13 @@ class CreateFormEmployee extends StatelessWidget {
   });
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FaceFeaturesModel? faceFeatures;
+  var isUpdateEmployee = false;
 
   Future tapChangeImageEmployee(BuildContext context) async {
     try {
       Uint8List? bytesFromPicker = await ImagePickerWeb.getImageAsBytes();
 
       String imageBase64 = base64Encode(bytesFromPicker!);
-      // final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      // if (image == null) return;
-      // var image0 = File(image.path);
-
-      // var imageBase64 = base64Encode(image0.readAsBytesSync());
 
       return {'image': imageBase64};
     } catch (e) {
@@ -99,17 +100,70 @@ class CreateFormEmployee extends StatelessWidget {
   }
 
   Form dataFormEmployee(BuildContext context, CreateEmployeeState state) {
+    
+    if (GoRouterState.of(context).uri.queryParameters['id'] != null &&
+        state.employee == null) {
+      context.read<CreateEmployeeBloc>().add(CreateEmployeeByIdEvent(
+          id: GoRouterState.of(context).uri.queryParameters['id']!));
+      isUpdateEmployee = true;
+    }
+
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextGlobal(message: '${state.employee?.toJson()}'),
-          Row(
-            children: [
-              state.employee == null || state.employee!.image == null
-                  ? Center(
-                      child: InkWell(
+      child: BlocListener<CreateEmployeeBloc, CreateEmployeeState>(
+        listener: (context, state) {
+          if (state is CreateEmployeeSuccessState) {
+            alertNotification(
+                context: context,
+                type: 'success',
+                message: state.isUpdateEmployee
+                    ? 'Berhasil mengupdate data karyawan.'
+                    : 'Berhasil menambahkan data karyawan.',
+                title: 'Berhasil!');
+            context.go('/karyawan/page');
+          } else if (state is CreateEmployeeErrorState) {
+            alertNotification(
+                context: context, type: 'error', message: state.errorMessage);
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                state.employee == null || state.employee!.image == null
+                    ? Center(
+                        child: InkWell(
+                          onTap: () async {
+                            var dataImage =
+                                await tapChangeImageEmployee(context);
+                            if (dataImage != null) {
+                              var empl = state.employee;
+                              if (empl == null) {
+                                empl = EmployeeModel(image: dataImage['image']);
+                              } else {
+                                empl = empl.copyWith(image: dataImage['image']);
+                              }
+                              context.read<CreateEmployeeBloc>().add(
+                                  CreateEmployeeChangedEvent(
+                                      employeeData: empl));
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: const Center(
+                              child: Icon(
+                                Iconsax.gallery_add_outline,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : InkWell(
                         onTap: () async {
                           var dataImage = await tapChangeImageEmployee(context);
                           if (dataImage != null) {
@@ -123,325 +177,365 @@ class CreateFormEmployee extends StatelessWidget {
                                 CreateEmployeeChangedEvent(employeeData: empl));
                           }
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: const Center(
-                            child: Icon(
-                              Iconsax.gallery_add_outline,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+                        child: SizedBox(
+                            height: 200,
+                            child: Image.memory(
+                              base64Decode(state.employee!.image!),
+                              fit: BoxFit.fill,
+                            )),
                       ),
-                    )
-                  : InkWell(
-                      onTap: () async {
-                        var dataImage = await tapChangeImageEmployee(context);
-                        if (dataImage != null) {
-                          var empl = state.employee;
-                          if (empl == null) {
-                            empl = EmployeeModel(image: dataImage['image']);
-                          } else {
-                            empl = empl.copyWith(image: dataImage['image']);
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FormGlobal(
+                    title: "Nama",
+                    controller: isUpdateEmployee == false
+                        ? null
+                        : TextEditingController(text: state.employee?.name),
+                    onChanged: (p0) {
+                      isUpdateEmployee = false;
+                      var empl = state.employee;
+                      if (empl == null) {
+                        empl = EmployeeModel(name: p0);
+                      } else {
+                        empl = empl.copyWith(name: p0);
+                      }
+
+                      context
+                          .read<CreateEmployeeBloc>()
+                          .add(CreateEmployeeChangedEvent(employeeData: empl));
+                    },
+                    validator: (p0) {
+                      if (state.employee == null ||
+                          state.employee!.name == null) {
+                        return 'Nama harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: FormGlobal(
+                    title: "NIK",
+                    keyboardType: TextInputType.number,
+                    controller: isUpdateEmployee == false
+                        ? null
+                        : TextEditingController(text: state.employee?.nik),
+                    onChanged: (p0) {
+                      isUpdateEmployee = false;
+                      var empl = state.employee;
+
+                      if (empl == null) {
+                        empl = EmployeeModel(nik: p0);
+                      } else {
+                        empl = empl.copyWith(nik: p0);
+                      }
+
+                      context
+                          .read<CreateEmployeeBloc>()
+                          .add(CreateEmployeeChangedEvent(employeeData: empl));
+                    },
+                    validator: (p0) {
+                      if (state.employee == null ||
+                          state.employee!.nik == null) {
+                        return 'NIK harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FormGlobal(
+                    title: "No. Handphone",
+                    controller: isUpdateEmployee == false
+                        ? null
+                        : TextEditingController(text: state.employee?.nohp),
+                    keyboardType: TextInputType.number,
+                    onChanged: (p0) {
+                      isUpdateEmployee = false;
+                      var empl = state.employee;
+                      if (empl == null) {
+                        empl = EmployeeModel(nohp: p0);
+                      } else {
+                        empl = empl.copyWith(nohp: p0);
+                      }
+                      context
+                          .read<CreateEmployeeBloc>()
+                          .add(CreateEmployeeChangedEvent(employeeData: empl));
+                    },
+                    validator: (p0) {
+                      if (state.employee == null ||
+                          state.employee!.nohp == null) {
+                        return 'No. HP harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: FormGlobal(
+                    title: "Alamat",
+                    controller: isUpdateEmployee == false
+                        ? null
+                        : TextEditingController(text: state.employee?.address),
+                    onChanged: (p0) {
+                      isUpdateEmployee = false;
+                      var empl = state.employee;
+                      if (empl == null) {
+                        empl = EmployeeModel(address: p0);
+                      } else {
+                        empl = empl.copyWith(address: p0);
+                      }
+                      context
+                          .read<CreateEmployeeBloc>()
+                          .add(CreateEmployeeChangedEvent(employeeData: empl));
+                    },
+                    validator: (p0) {
+                      if (state.employee == null ||
+                          state.employee!.address == null) {
+                        return 'Alamat harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(
+                    child: DropdownGlobal(
+                  listItems: const ['LAKI-LAKI', 'PEREMPUAN'],
+                  value: state.employee?.gender,
+                  hint: '-- Pilih --',
+                  onChanged: (p0) {
+                    var empl = state.employee;
+                    if (empl == null) {
+                      empl = EmployeeModel(gender: p0.toString());
+                    } else {
+                      empl = empl.copyWith(gender: p0.toString());
+                    }
+                    context
+                        .read<CreateEmployeeBloc>()
+                        .add(CreateEmployeeChangedEvent(employeeData: empl));
+                  },
+                  title: 'Jenis Kelamin',
+                )),
+                const SizedBox(
+                  width: 10,
+                ),
+                BlocBuilder<BranchBloc, BranchState>(
+                  builder: (context, stateBranch) {
+                    var listBranch = <String>[];
+                    if (stateBranch is BranchLoadedtate) {
+                      for (var a in stateBranch.listBranch) {
+                        listBranch.add(a.name!);
+                      }
+                    }
+                    return Expanded(
+                        child: DropdownGlobal(
+                      listItems: listBranch,
+                      value: state.employee?.nameBranch,
+                      hint: '-- Pilih --',
+                      onChanged: (p0) {
+                        var empl = state.employee;
+                        if (stateBranch is BranchLoadedtate) {
+                          for (var a in stateBranch.listBranch) {
+                            if (a.name == p0) {
+                              if (empl == null) {
+                                empl = EmployeeModel(idBranch: a.id);
+                                empl = EmployeeModel(nameBranch: p0.toString());
+                              } else {
+                                empl = empl.copyWith(idBranch: a.id);
+                                empl = empl.copyWith(nameBranch: p0.toString());
+                              }
+                            }
                           }
+                        }
+
+                        context.read<CreateEmployeeBloc>().add(
+                            CreateEmployeeChangedEvent(employeeData: empl!));
+                      },
+                      title: 'Cabang',
+                    ));
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FormGlobal(
+                    title: "Total Cuti",
+                    controller: isUpdateEmployee == false
+                        ? null
+                        : TextEditingController(
+                            text: state.employee?.totalCuti),
+                    onChanged: (p0) {
+                      isUpdateEmployee = false;
+                      var empl = state.employee;
+                      if (empl == null) {
+                        empl = EmployeeModel(totalCuti: p0);
+                      } else {
+                        empl = empl.copyWith(totalCuti: p0);
+                      }
+                      context
+                          .read<CreateEmployeeBloc>()
+                          .add(CreateEmployeeChangedEvent(employeeData: empl));
+                    },
+                    validator: (p0) {
+                      return null;
+                    },
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: FormGlobal(
+                    title: "Sisa Cuti",
+                    controller: isUpdateEmployee == false
+                        ? null
+                        : TextEditingController(
+                            text: state.employee?.remainingCuti),
+                    onChanged: (p0) {
+                      isUpdateEmployee = false;
+                      var empl = state.employee;
+                      if (empl == null) {
+                        empl = EmployeeModel(remainingCuti: p0);
+                      } else {
+                        empl = empl.copyWith(remainingCuti: p0);
+                      }
+                      context
+                          .read<CreateEmployeeBloc>()
+                          .add(CreateEmployeeChangedEvent(employeeData: empl));
+                    },
+                    validator: (p0) {
+                      return null;
+                    },
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(child: BlocBuilder<DepartmentBloc, DepartmentState>(
+                  builder: (context, stateDepartment) {
+                    var listDepartment = <String>[];
+                    if (stateDepartment is DepartmentLoadedState) {
+                      for (var a in stateDepartment.listDepartments) {
+                        listDepartment.add(a.name!);
+                      }
+                    }
+                    return DropdownGlobal(
+                      listItems: listDepartment,
+                      value: state.employee?.department,
+                      hint: '-- Pilih --',
+                      onChanged: (p0) {
+                        var empl = state.employee;
+                        if (stateDepartment is DepartmentLoadedState) {
+                          for (var a in stateDepartment.listDepartments) {
+                            if (a.name == p0) {
+                              if (empl == null) {
+                                empl = EmployeeModel(department: a.name);
+                              } else {
+                                empl = empl.copyWith(department: a.name);
+                              }
+                            }
+                          }
+                        }
+                        context.read<CreateEmployeeBloc>().add(
+                            CreateEmployeeChangedEvent(employeeData: empl!));
+                      },
+                      title: 'Jabatan',
+                    );
+                  },
+                )),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: DropdownGlobal(
+                  listItems: const ['Tetap', 'Kontrak', 'Magang'],
+                  value: state.employee?.workingStatus,
+                  hint: '-- Pilih --',
+                  onChanged: (p0) {
+                    var empl = state.employee;
+                    if (empl == null) {
+                      empl = EmployeeModel(workingStatus: p0.toString());
+                    } else {
+                      empl = empl.copyWith(workingStatus: p0.toString());
+                    }
+                    context
+                        .read<CreateEmployeeBloc>()
+                        .add(CreateEmployeeChangedEvent(employeeData: empl));
+                  },
+                  title: 'Status',
+                )),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            BlocBuilder<AccountCubit, AccountState>(
+              builder: (context, stateAccount) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ButtonGlobal(
+                      message: "Simpan",
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
                           context.read<CreateEmployeeBloc>().add(
-                              CreateEmployeeChangedEvent(employeeData: empl));
+                              CreateEmployeeAddedEvent(
+                                  employeeData: EmployeeModel.fromJson(
+                                    state.employee?.toJson() ?? {},
+                                  ),
+                                  accountData: stateAccount is AccountLoaded
+                                      ? stateAccount.account
+                                      : AccountModel()));
                         }
                       },
-                      child: SizedBox(
-                          height: 200,
-                          child: Image.memory(
-                            base64Decode(state.employee!.image!),
-                            fit: BoxFit.fill,
-                          )),
                     ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormGlobal(
-                  title: "Nama",
-                  onChanged: (p0) {
-                    var empl = state.employee;
-                    if (empl == null) {
-                      empl = EmployeeModel(name: p0);
-                    } else {
-                      empl = empl.copyWith(name: p0);
-                    }
-
-                    context
-                        .read<CreateEmployeeBloc>()
-                        .add(CreateEmployeeChangedEvent(employeeData: empl));
-                  },
-                  validator: (p0) {
-                    if (state.employee == null ||
-                        state.employee!.name == null) {
-                      return 'Nama harus diisi!';
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: FormGlobal(
-                  title: "NIK",
-                  keyboardType: TextInputType.number,
-                  onChanged: (p0) {
-                    var empl = state.employee;
-
-                    if (empl == null) {
-                      empl = EmployeeModel(nik: p0);
-                    } else {
-                      empl = empl.copyWith(nik: p0);
-                    }
-
-                    context
-                        .read<CreateEmployeeBloc>()
-                        .add(CreateEmployeeChangedEvent(employeeData: empl));
-                  },
-                  validator: (p0) {
-                    if (state.employee == null || state.employee!.nik == null) {
-                      return 'NIK harus diisi!';
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormGlobal(
-                  title: "No. Handphone",
-                  onChanged: (p0) {
-                    var empl = state.employee;
-                    if (empl == null) {
-                      empl = EmployeeModel(nohp: p0);
-                    } else {
-                      empl = empl.copyWith(nohp: p0);
-                    }
-                    context
-                        .read<CreateEmployeeBloc>()
-                        .add(CreateEmployeeChangedEvent(employeeData: empl));
-                  },
-                  validator: (p0) {
-                    if (state.employee == null ||
-                        state.employee!.nohp == null) {
-                      return 'No. HP harus diisi!';
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: FormGlobal(
-                  title: "Alamat",
-                  onChanged: (p0) {
-                    var empl = state.employee;
-                    if (empl == null) {
-                      empl = EmployeeModel(address: p0);
-                    } else {
-                      empl = empl.copyWith(address: p0);
-                    }
-                    context
-                        .read<CreateEmployeeBloc>()
-                        .add(CreateEmployeeChangedEvent(employeeData: empl));
-                  },
-                  validator: (p0) {
-                    if (state.employee == null ||
-                        state.employee!.address == null) {
-                      return 'Alamat harus diisi!';
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: DropdownGlobal(
-                listItems: const ['LAKI-LAKI', 'PEREMPUAN'],
-                value: state.employee?.gender,
-                hint: '-- Pilih --',
-                onChanged: (p0) {
-                  var empl = state.employee;
-                  if (empl == null) {
-                    empl = EmployeeModel(gender: p0.toString());
-                  } else {
-                    empl = empl.copyWith(gender: p0.toString());
-                  }
-                  context
-                      .read<CreateEmployeeBloc>()
-                      .add(CreateEmployeeChangedEvent(employeeData: empl));
-                },
-                title: 'Jenis Kelamin',
-              )),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                  child: DropdownGlobal(
-                listItems: const ['Cabang Sawangan', 'Cabang Bedahan'],
-                value: state.employee?.nameBranch,
-                hint: '-- Pilih --',
-                onChanged: (p0) {
-                  var empl = state.employee;
-                  if (empl == null) {
-                    empl = EmployeeModel(nameBranch: p0.toString());
-                  } else {
-                    empl = empl.copyWith(nameBranch: p0.toString());
-                  }
-                  context
-                      .read<CreateEmployeeBloc>()
-                      .add(CreateEmployeeChangedEvent(employeeData: empl));
-                },
-                title: 'Cabang',
-              )),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormGlobal(
-                  title: "Total Cuti",
-                  onChanged: (p0) {
-                    var empl = state.employee;
-                    if (empl == null) {
-                      empl = EmployeeModel(totalCuti: p0);
-                    } else {
-                      empl = empl.copyWith(totalCuti: p0);
-                    }
-                    context
-                        .read<CreateEmployeeBloc>()
-                        .add(CreateEmployeeChangedEvent(employeeData: empl));
-                  },
-                  validator: (p0) {
-                    return null;
-                  },
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: FormGlobal(
-                  title: "Sisa Cuti",
-                  onChanged: (p0) {
-                    var empl = state.employee;
-                    if (empl == null) {
-                      empl = EmployeeModel(remainingCuti: p0);
-                    } else {
-                      empl = empl.copyWith(remainingCuti: p0);
-                    }
-                    context
-                        .read<CreateEmployeeBloc>()
-                        .add(CreateEmployeeChangedEvent(employeeData: empl));
-                  },
-                  validator: (p0) {
-                    return null;
-                  },
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: DropdownGlobal(
-                listItems: const ['IT Support', 'Finance', 'HRD', 'OB'],
-                value: state.employee?.workingPosition,
-                hint: '-- Pilih --',
-                onChanged: (p0) {
-                  var empl = state.employee;
-                  if (empl == null) {
-                    empl = EmployeeModel(workingPosition: p0.toString());
-                  } else {
-                    empl = empl.copyWith(workingPosition: p0.toString());
-                  }
-                  context
-                      .read<CreateEmployeeBloc>()
-                      .add(CreateEmployeeChangedEvent(employeeData: empl));
-                },
-                title: 'Jabatan',
-              )),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                  child: DropdownGlobal(
-                listItems: const ['Tetap', 'Kontrak', 'Magang'],
-                value: state.employee?.workingStatus,
-                hint: '-- Pilih --',
-                onChanged: (p0) {
-                  var empl = state.employee;
-                  if (empl == null) {
-                    empl = EmployeeModel(workingStatus: p0.toString());
-                  } else {
-                    empl = empl.copyWith(workingStatus: p0.toString());
-                  }
-                  context
-                      .read<CreateEmployeeBloc>()
-                      .add(CreateEmployeeChangedEvent(employeeData: empl));
-                },
-                title: 'Status',
-              )),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ButtonGlobal(
-                message: "Simpan",
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    print("STATE : ${state.employee?.toJson()}");
-                    context.read<CreateEmployeeBloc>().add(
-                        CreateEmployeeAddedEvent(
-                            employeeData: EmployeeModel.fromJson(
-                                state.employee?.toJson() ?? {})));
-                  }
-                },
-              ),
-            ],
-          ),
-        ],
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -49,9 +49,12 @@ class _LoginPagesState extends State<LoginPages> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextGlobal(
-                              message: "AttendSmart",
-                              colorText: Colors.white,
+                            SizedBox(
+                              width: 50,
+                              child: Image.asset(
+                                'assets/images/logo_attend.png',
+                                color: Colors.white,
+                              ),
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,10 +89,11 @@ class _LoginPagesState extends State<LoginPages> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: TextGlobal(
-                      message: 'AttendSmart',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    child: SizedBox(
+                      width: 100,
+                      child: Image.asset(
+                        'assets/images/logo_attend.png',
+                      ),
                     ),
                   )
                 ],

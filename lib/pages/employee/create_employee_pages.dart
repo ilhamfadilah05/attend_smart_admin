@@ -1,7 +1,11 @@
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
+import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
+import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
+import 'package:attend_smart_admin/models/employee_model.dart';
 import 'package:attend_smart_admin/widgets/employee/create_form_employee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +18,19 @@ class CreateEmployeePages extends StatefulWidget {
 }
 
 class _CreateEmployeePagesState extends State<CreateEmployeePages> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<BranchBloc>().add(const BranchLoadedEvent());
+    context.read<DepartmentBloc>().add(const DepartmentLoadedEvent());
+  }
+
+  @override
+  void dispose() {
+    context.read<CreateEmployeeBloc>().add(CreateEmployeeInitialEvent());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, bool>(

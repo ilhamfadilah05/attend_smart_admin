@@ -34,46 +34,45 @@ final class EmployeeErrorState extends EmployeeState {
 class CreateEmployeeState extends Equatable {
   final EmployeeModel? employee;
 
-  final FormSubmissionStatus formStatus;
   final String errorMessage;
 
   const CreateEmployeeState({
     this.employee,
-    this.formStatus = const InitialFormStatus(),
     this.errorMessage = '',
   });
 
   CreateEmployeeState copyWith({
     EmployeeModel? employee,
-    FormSubmissionStatus? formStatus,
     String? errorMessage,
   }) {
     return CreateEmployeeState(
       employee: employee ?? employee,
-      formStatus: formStatus ?? this.formStatus,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [employee, formStatus, errorMessage];
+  List<Object?> get props => [employee, errorMessage];
+}
+
+final class CreateEmployeeErrorState extends CreateEmployeeState {
+  final String message;
+
+  const CreateEmployeeErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }
 
 final class CreateEmployeeInitialState extends CreateEmployeeState {}
 
+final class CreateEmployeeLoadingState extends CreateEmployeeState {}
 
-abstract class FormSubmissionStatus {
-  const FormSubmissionStatus();
+final class CreateEmployeeSuccessState extends CreateEmployeeState {
+  final bool isUpdateEmployee;
+
+  const CreateEmployeeSuccessState({required this.isUpdateEmployee});
+
+  @override
+  List<Object> get props => [isUpdateEmployee];
 }
-
-class InitialFormStatus extends FormSubmissionStatus {
-  const InitialFormStatus();
-}
-
-class FormSubmitting extends FormSubmissionStatus {}
-
-class SubmissionLoading extends FormSubmissionStatus {}
-
-class SubmissionSuccess extends FormSubmissionStatus {}
-
-class SubmissionFailed extends FormSubmissionStatus {}

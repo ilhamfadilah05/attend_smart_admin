@@ -1,6 +1,8 @@
+import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
+import 'package:attend_smart_admin/pages/department/department_pages.dart';
 import 'package:attend_smart_admin/pages/employee/create_employee_pages.dart';
 import 'package:attend_smart_admin/pages/employee/employee_pages.dart';
 import 'package:attend_smart_admin/widgets/navbar/navbar.dart';
@@ -17,6 +19,12 @@ class ScreensPages extends StatefulWidget {
 }
 
 class _ScreensPagesState extends State<ScreensPages> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AccountCubit>().init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,11 +80,23 @@ class _ScreensPagesState extends State<ScreensPages> {
                                           .matchedLocation
                                           .contains('/karyawan')
                                       ? GoRouterState.of(context)
-                                              .matchedLocation
-                                              .contains('/karyawan/create')
+                                                  .matchedLocation
+                                                  .contains(
+                                                      '/karyawan/create') ||
+                                              GoRouterState.of(context)
+                                                  .matchedLocation
+                                                  .contains('/karyawan/edit')
                                           ? const CreateEmployeePages()
                                           : const EmployeePages()
-                                      : Container()
+                                      : GoRouterState.of(context)
+                                              .matchedLocation
+                                              .contains('/jabatan')
+                                          ? GoRouterState.of(context)
+                                                  .matchedLocation
+                                                  .contains('/jabatan/create')
+                                              ? Container()
+                                              : const DepartmentPages()
+                                          : Container()
                                 ],
                               ),
                             ))

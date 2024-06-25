@@ -1,3 +1,5 @@
+import 'package:attend_smart_admin/components/global_random_string_component.dart';
+import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
 import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -33,21 +35,41 @@ class CreateEmployeeBloc
         ));
       } else if (event is CreateEmployeeAddedEvent) {
         try {
+          var randomString = getRandomString(10);
+          var employeeData = state.employee;
+
+          employeeData?.nameCompany = event.accountData.nameCompany;
+          employeeData?.idCompany = event.accountData.idCompany;
+
+          var isUpdateEmployee = true;
+
+          if (employeeData?.id == null) {
+            employeeData?.id =
+                'employee_${event.accountData.idCompany}_$randomString';
+            isUpdateEmployee = false;
+          }
+
           var result =
               await employeeRepo.addEmployee(employee: state.employee!);
 
           if (result.runtimeType == String) {
-            emit(state.copyWith(
-                errorMessage: state.errorMessage,
-                formStatus: SubmissionFailed()));
+            emit(CreateEmployeeErrorState(message: state.errorMessage));
           } else {
-            emit(state.copyWith(
-                employee: state.employee, formStatus: SubmissionSuccess()));
+            emit(
+                CreateEmployeeSuccessState(isUpdateEmployee: isUpdateEmployee));
           }
         } catch (e) {
-          emit(state.copyWith(
-              errorMessage: e.toString(), formStatus: SubmissionFailed()));
+          emit(CreateEmployeeErrorState(message: e.toString()));
         }
+      }
+    });
+
+    on<CreateEmployeeByIdEvent>((event, emit) async {
+      var result = await employeeRepo.getEmployeeById(id: event.id);
+      if (result.runtimeType == String) {
+        emit(CreateEmployeeErrorState(message: result));
+      } else {
+        emit(state.copyWith(employee: EmployeeModel.fromJson(result)));
       }
     });
   }

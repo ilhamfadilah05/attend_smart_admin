@@ -1,30 +1,27 @@
-import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
+import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_table_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
-import 'package:attend_smart_admin/models/employee_model.dart';
-import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
+import 'package:attend_smart_admin/repository/department/department_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class EmployeePages extends StatefulWidget {
-  const EmployeePages({super.key});
+class DepartmentPages extends StatefulWidget {
+  const DepartmentPages({super.key});
 
   @override
-  State<EmployeePages> createState() => _EmployeePagesState();
+  State<DepartmentPages> createState() => _DepartmentPagesState();
 }
 
-class _EmployeePagesState extends State<EmployeePages> {
+class _DepartmentPagesState extends State<DepartmentPages> {
   @override
   void initState() {
-    context
-        .read<EmployeeBloc>()
-        .add(const EmployeeLoadedEvent(startData: 1, lastData: 100));
+    context.read<DepartmentBloc>().add(const DepartmentLoadedEvent());
     super.initState();
   }
 
@@ -42,7 +39,7 @@ class _EmployeePagesState extends State<EmployeePages> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextGlobal(
-                message: 'Karyawan',
+                message: 'Jabatan',
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -50,8 +47,8 @@ class _EmployeePagesState extends State<EmployeePages> {
                 height: 10,
               ),
               const BreadCrumbGlobal(
-                firstHref: '/karyawan/page',
-                firstTitle: 'Karyawan',
+                firstHref: '/jabatan/page',
+                firstTitle: 'Jabatan',
                 typeBreadcrumb: 'List',
               ),
               const SizedBox(
@@ -61,19 +58,12 @@ class _EmployeePagesState extends State<EmployeePages> {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlocBuilder<CreateEmployeeBloc, CreateEmployeeState>(
-                          builder: (context, stateCreateEmployee) {
-                            return ButtonGlobal(
-                              message: 'Tambah Karyawan',
-                              onPressed: () {
-                                context
-                                    .read<CreateEmployeeBloc>()
-                                    .add(CreateEmployeeInitialEvent());
-                                context.go('/karyawan/create');
-                              },
-                              colorBtn: blueDefaultLight,
-                            );
+                        ButtonGlobal(
+                          message: 'Tambah Jabatan',
+                          onPressed: () {
+                            context.namedLocation('/jabatan/create');
                           },
+                          colorBtn: blueDefaultLight,
                         ),
                         const SizedBox(
                           height: 10,
@@ -88,9 +78,9 @@ class _EmployeePagesState extends State<EmployeePages> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ButtonGlobal(
-                          message: 'Tambah Karyawan',
+                          message: 'Tambah Jabatan',
                           onPressed: () {
-                            context.go('/karyawan/create');
+                            context.go('/jabatan/create');
                           },
                           colorBtn: blueDefaultLight,
                         ),
@@ -103,13 +93,13 @@ class _EmployeePagesState extends State<EmployeePages> {
               const SizedBox(
                 height: 20,
               ),
-              BlocBuilder<EmployeeBloc, EmployeeState>(
+              BlocBuilder<DepartmentBloc, DepartmentState>(
                 builder: (context, state) {
-                  if (state is EmployeeLoadingState) {
+                  if (state is DepartmentLoadingState) {
                     return const Center(child: CircularProgressIndicator());
-                  } else if (state is EmployeeErrorState) {
+                  } else if (state is DepartmentErrorState) {
                     return Container();
-                  } else if (state is EmployeeEmptyState) {
+                  } else if (state is DepartmentEmptyState) {
                     return Center(
                       child: SizedBox(
                         child: Column(
@@ -130,10 +120,9 @@ class _EmployeePagesState extends State<EmployeePages> {
                         ),
                       ),
                     );
-                  } else if (state is EmployeeLoadedState) {
+                  } else if (state is DepartmentLoadedState) {
                     return FutureBuilder(
-                      future:
-                          listDataTableEmployee(state.listEmployee, context),
+                      future: listDataTableDepartment(state.listDepartments),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -141,17 +130,17 @@ class _EmployeePagesState extends State<EmployeePages> {
                         } else if (snapshot.hasError) {
                           return Container();
                         } else if (snapshot.hasData) {
-                          var listDataEmployee = snapshot.data;
+                          var listDataDepartment = snapshot.data;
                           return TableGlobal(
-                              data: listDataEmployee!,
-                              headers: listHeaderTableEmployee,
+                              data: listDataDepartment!,
+                              headers: listHeaderTableDepartment,
                               page: 1,
                               pageChanged: (p0) {},
-                              pageTotal: listDataEmployee.length,
+                              pageTotal: listDataDepartment.length,
                               widthTable:
                                   MediaQuery.of(context).size.width <= 800
-                                      ? 140
-                                      : 190);
+                                      ? 220
+                                      : 400);
                         }
 
                         return Center(child: TextGlobal(message: 'message'));
