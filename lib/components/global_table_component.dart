@@ -34,28 +34,28 @@ class TableGlobal extends StatelessWidget {
             children: [TableRow(children: headers), ...data],
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: NumberPagination(
-                onPageChanged: pageChanged,
-                threshold: 5,
-                pageTotal: pageTotal,
-                pageInit: page,
-                colorPrimary: Colors.black,
-                colorSub: Colors.white,
-                buttonRadius: 5,
-                buttonElevation: 2,
-                fontSize: 12,
-                fontFamily: 'quicksand',
-                groupSpacing: 5,
-              ),
-            ),
-          ],
-        ),
+        // const SizedBox(
+        //   height: 20,
+        // ),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: NumberPagination(
+        //         onPageChanged: pageChanged,
+        //         threshold: 2,
+        //         pageTotal: (pageTotal / 5).ceil(),
+        //         pageInit: page,
+        //         colorPrimary: Colors.black,
+        //         colorSub: Colors.white,
+        //         buttonRadius: 5,
+        //         buttonElevation: 2,
+        //         fontSize: 12,
+        //         fontFamily: 'quicksand',
+        //         groupSpacing: 5,
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }

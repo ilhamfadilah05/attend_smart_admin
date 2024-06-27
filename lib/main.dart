@@ -49,9 +49,14 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => EmployeeBloc(EmployeeRepository())),
           BlocProvider(
               create: (context) => CreateEmployeeBloc(EmployeeRepository())),
-          BlocProvider(create: (context) => BranchBloc(BranchRepository())),
           BlocProvider(
               create: (context) => DepartmentBloc(DepartmentRepository())),
+          BlocProvider(
+              create: (context) =>
+                  CreateDepartmentBloc(DepartmentRepository())),
+          BlocProvider(create: (context) => BranchBloc(BranchRepository())),
+          BlocProvider(
+              create: (context) => CreateBranchBloc(BranchRepository())),
         ],
         child: BlocBuilder<ThemeCubit, bool>(
           builder: (context, state) {

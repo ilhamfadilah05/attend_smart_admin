@@ -2,6 +2,9 @@ import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
+import 'package:attend_smart_admin/pages/branch/branch_pages.dart';
+import 'package:attend_smart_admin/pages/branch/create_branch_pages.dart';
+import 'package:attend_smart_admin/pages/department/create_department_pages.dart';
 import 'package:attend_smart_admin/pages/department/department_pages.dart';
 import 'package:attend_smart_admin/pages/employee/create_employee_pages.dart';
 import 'package:attend_smart_admin/pages/employee/employee_pages.dart';
@@ -92,11 +95,27 @@ class _ScreensPagesState extends State<ScreensPages> {
                                               .matchedLocation
                                               .contains('/jabatan')
                                           ? GoRouterState.of(context)
-                                                  .matchedLocation
-                                                  .contains('/jabatan/create')
-                                              ? Container()
+                                                      .matchedLocation
+                                                      .contains(
+                                                          '/jabatan/create') ||
+                                                  GoRouterState.of(context)
+                                                      .matchedLocation
+                                                      .contains('/jabatan/edit')
+                                              ? const CreateDepartmentPages()
                                               : const DepartmentPages()
-                                          : Container()
+                                          : GoRouterState.of(context)
+                                                  .matchedLocation
+                                                  .contains('/cabang')
+                                              ? GoRouterState.of(context)
+                                                          .matchedLocation
+                                                          .contains(
+                                                              '/cabang/create') ||
+                                                      GoRouterState.of(context)
+                                                          .matchedLocation
+                                                          .contains('/cabang/edit')
+                                                  ? const CreateBranchPages()
+                                                  : const BranchPages()
+                                              : Container()
                                 ],
                               ),
                             ))

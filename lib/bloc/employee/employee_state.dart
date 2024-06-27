@@ -29,25 +29,37 @@ final class EmployeeErrorState extends EmployeeState {
   List<Object> get props => [message];
 }
 
+final class EmployeeDeleteSuccessState extends EmployeeState {}
+
+final class EmployeeDeleteErrorState extends EmployeeState {
+  final String message;
+
+  const EmployeeDeleteErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
 // Create Employee State
 
 class CreateEmployeeState extends Equatable {
   final EmployeeModel? employee;
 
   final String errorMessage;
+  final bool isUpdate;
 
-  const CreateEmployeeState({
-    this.employee,
-    this.errorMessage = '',
-  });
+  const CreateEmployeeState(
+      {this.employee, this.errorMessage = '', this.isUpdate = false});
 
   CreateEmployeeState copyWith({
     EmployeeModel? employee,
     String? errorMessage,
+    bool? isUpdate,
   }) {
     return CreateEmployeeState(
       employee: employee ?? employee,
       errorMessage: errorMessage ?? this.errorMessage,
+      isUpdate: isUpdate ?? this.isUpdate,
     );
   }
 
@@ -76,3 +88,5 @@ final class CreateEmployeeSuccessState extends CreateEmployeeState {
   @override
   List<Object> get props => [isUpdateEmployee];
 }
+
+final class CreateEmployeByIdSuccessState extends CreateEmployeeState {}

@@ -1,8 +1,10 @@
+import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
 import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -114,8 +116,12 @@ Future<List<TableRow>> listDataTableEmployee(
                 ),
                 InkWell(
                   onTap: () {
-                    dialogQuestion(context,
-                        onTapYes: () {},
+                    dialogQuestion(context, onTapYes: () {
+                      context
+                          .read<EmployeeBloc>()
+                          .add(EmployeeDeleteEvent(id: dataEmployee.id!));
+                      Navigator.pop(context);
+                    },
                         icon: const Icon(
                           Iconsax.trash_bold,
                           color: Colors.red,
@@ -147,10 +153,12 @@ Future<List<TableRow>> listDataTableEmployee(
 class EmployeeRepository {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future getEmployee() async {
+  Future getEmployee(String idCompany) async {
     try {
-      var result = await firestore.collection('employee').get();
-      // print('object $result');
+      var result = await firestore
+          .collection('employee')
+          .where('id_company', isEqualTo: idCompany)
+          .get();
       var listEmployee = <EmployeeModel>[];
       for (var i = 0; i < result.docs.length; i++) {
         var data = result.docs[i].data();

@@ -22,6 +22,12 @@ List<NavbarModel> listNavbar() {
       href: '/jabatan',
     ),
     NavbarModel(
+      name: 'cabang',
+      label: 'Cabang',
+      icon: Iconsax.buildings_2_outline,
+      href: '/cabang',
+    ),
+    NavbarModel(
       name: 'histori',
       label: 'Histori Absen',
       icon: BoxIcons.bx_history,
@@ -44,12 +50,6 @@ List<NavbarModel> listNavbar() {
       label: 'Broadcast',
       icon: Iconsax.volume_high_outline,
       href: '/broadcast',
-    ),
-    NavbarModel(
-      name: 'role',
-      label: 'Role',
-      icon: Iconsax.receipt_minus_outline,
-      href: '/role',
     ),
     NavbarModel(
       name: 'user',

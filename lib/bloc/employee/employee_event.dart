@@ -12,13 +12,25 @@ class EmployeeLoadingEvent extends EmployeeEvent {}
 class EmployeeLoadedEvent extends EmployeeEvent {
   final int startData;
   final int lastData;
+  final String idCompany;
 
-  const EmployeeLoadedEvent({required this.startData, required this.lastData});
+  const EmployeeLoadedEvent(
+      {required this.startData,
+      required this.lastData,
+      required this.idCompany});
 
   @override
-  List<Object> get props => [startData, lastData];
+  List<Object> get props => [startData, lastData, idCompany];
 }
 
+class EmployeeDeleteEvent extends EmployeeEvent {
+  final String id;
+
+  const EmployeeDeleteEvent({required this.id});
+
+  @override
+  List<Object> get props => [id];
+}
 
 // Create Employee Event
 
@@ -45,10 +57,12 @@ class CreateEmployeeAddedEvent extends CreateEmployeeEvent {
 
 class CreateEmployeeChangedEvent extends CreateEmployeeEvent {
   final EmployeeModel employeeData;
-  const CreateEmployeeChangedEvent({required this.employeeData});
+  final bool isUpdate;
+  const CreateEmployeeChangedEvent(
+      {required this.employeeData, required this.isUpdate});
 
   @override
-  List<Object> get props => [employeeData];
+  List<Object> get props => [employeeData, isUpdate];
 }
 
 class CreateEmplyeeErrorEvent extends CreateEmployeeEvent {
@@ -58,7 +72,6 @@ class CreateEmplyeeErrorEvent extends CreateEmployeeEvent {
   @override
   List<Object> get props => [message];
 }
-
 
 class CreateEmployeeByIdEvent extends CreateEmployeeEvent {
   final String id;

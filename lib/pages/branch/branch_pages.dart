@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
-import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
@@ -10,20 +10,20 @@ import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_table_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
-import 'package:attend_smart_admin/repository/department/department_repository.dart';
+import 'package:attend_smart_admin/repository/Branch/Branch_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class DepartmentPages extends StatefulWidget {
-  const DepartmentPages({super.key});
+class BranchPages extends StatefulWidget {
+  const BranchPages({super.key});
 
   @override
-  State<DepartmentPages> createState() => _DepartmentPagesState();
+  State<BranchPages> createState() => _BranchPagesState();
 }
 
-class _DepartmentPagesState extends State<DepartmentPages> {
+class _BranchPagesState extends State<BranchPages> {
   var accountData = AccountModel();
   var page = 1;
 
@@ -39,8 +39,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
     if (accountData.idCompany == null) {
       context.pushReplacement('/login');
     } else {
-      context.read<DepartmentBloc>().add(DepartmentLoadedEvent(
-          idCompany: accountData.idCompany!, lastData: const {}));
+      context
+          .read<BranchBloc>()
+          .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
     }
   }
 
@@ -48,16 +49,17 @@ class _DepartmentPagesState extends State<DepartmentPages> {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, bool>(
       builder: (context, state) {
-        return BlocListener<DepartmentBloc, DepartmentState>(
+        return BlocListener<BranchBloc, BranchState>(
           listener: (context, state) {
-            if (state is DepartmentDeleteSuccessState) {
+            if (state is BranchDeleteSuccessState) {
               alertNotification(
                   context: context,
                   type: 'success',
-                  message: 'Berhasil menghapus data jabatan.',
+                  message: 'Berhasil menghapus data cabang.',
                   title: 'Berhasil!');
-              context.read<DepartmentBloc>().add(DepartmentLoadedEvent(
-                  idCompany: accountData.idCompany!, lastData: const {}));
+              context
+                  .read<BranchBloc>()
+                  .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
             }
           },
           child: Container(
@@ -70,7 +72,7 @@ class _DepartmentPagesState extends State<DepartmentPages> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextGlobal(
-                  message: 'Jabatan',
+                  message: 'Cabang',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -78,8 +80,8 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                   height: 10,
                 ),
                 const BreadCrumbGlobal(
-                  firstHref: '/jabatan/page',
-                  firstTitle: 'Jabatan',
+                  firstHref: '/cabang/page',
+                  firstTitle: 'Cabang',
                   typeBreadcrumb: 'List',
                 ),
                 const SizedBox(
@@ -90,9 +92,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ButtonGlobal(
-                            message: 'Tambah Jabatan',
+                            message: 'Tambah Cabang',
                             onPressed: () {
-                              context.namedLocation('/jabatan/create');
+                              context.namedLocation('/cabang/create');
                             },
                             colorBtn: blueDefaultLight,
                           ),
@@ -109,9 +111,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ButtonGlobal(
-                            message: 'Tambah Jabatan',
+                            message: 'Tambah Cabang',
                             onPressed: () {
-                              context.go('/jabatan/create');
+                              context.go('/cabang/create');
                             },
                             colorBtn: blueDefaultLight,
                           ),
@@ -124,13 +126,13 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                 const SizedBox(
                   height: 20,
                 ),
-                BlocBuilder<DepartmentBloc, DepartmentState>(
+                BlocBuilder<BranchBloc, BranchState>(
                   builder: (context, state) {
-                    if (state is DepartmentLoadingState) {
+                    if (state is BranchLoadingState) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is DepartmentErrorState) {
+                    } else if (state is BranchErrorState) {
                       return Container();
-                    } else if (state is DepartmentEmptyState) {
+                    } else if (state is BranchEmptyState) {
                       return Center(
                         child: SizedBox(
                           child: Column(
@@ -151,10 +153,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                           ),
                         ),
                       );
-                    } else if (state is DepartmentLoadedState) {
+                    } else if (state is BranchLoadedState) {
                       return FutureBuilder(
-                        future: listDataTableDepartment(
-                            state.listDepartments, context),
+                        future: listDataTableBranch(state.listBranch, context),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -162,25 +163,24 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                           } else if (snapshot.hasError) {
                             return Container();
                           } else if (snapshot.hasData) {
-                            var listDataDepartment = snapshot.data;
+                            var listDataBranch = snapshot.data;
                             return TableGlobal(
-                                data: listDataDepartment!,
-                                headers: listHeaderTableDepartment,
+                                data: listDataBranch!,
+                                headers: listHeaderTableBranch,
                                 page: page,
                                 pageChanged: (p0) {
                                   setState(() {
                                     page = p0;
                                   });
-                                  context.read<DepartmentBloc>().add(
-                                      DepartmentLoadedEvent(
-                                          idCompany: accountData.idCompany!,
-                                          lastData: state.lastData));
+                                  context.read<BranchBloc>().add(
+                                      BranchLoadedEvent(
+                                          idCompany: accountData.idCompany!));
                                 },
-                                pageTotal: state.totalData,
+                                pageTotal: 0,
                                 widthTable:
                                     MediaQuery.of(context).size.width <= 800
-                                        ? 220
-                                        : 400);
+                                        ? 200
+                                        : 290);
                           }
 
                           return Center(child: TextGlobal(message: 'message'));

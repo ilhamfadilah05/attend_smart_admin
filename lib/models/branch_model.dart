@@ -5,6 +5,8 @@ class BranchModel {
   String? address;
   String? timeInAttendance;
   String? timeOutAttendance;
+  String? latLong;
+  int? radius;
 
   BranchModel({
     this.id,
@@ -13,6 +15,8 @@ class BranchModel {
     this.address,
     this.timeInAttendance,
     this.timeOutAttendance,
+    this.latLong,
+    this.radius,
   });
 
   BranchModel copyWith({
@@ -22,6 +26,8 @@ class BranchModel {
     String? address,
     String? timeInAttendance,
     String? timeOutAttendance,
+    String? latLong,
+    int? radius,
   }) {
     return BranchModel(
       id: id ?? this.id,
@@ -30,6 +36,8 @@ class BranchModel {
       address: address ?? this.address,
       timeInAttendance: timeInAttendance ?? this.timeInAttendance,
       timeOutAttendance: timeOutAttendance ?? this.timeOutAttendance,
+      latLong: latLong ?? this.latLong,
+      radius: radius ?? this.radius,
     );
   }
 
@@ -40,6 +48,8 @@ class BranchModel {
     address = json['address'];
     timeInAttendance = json['time_in_attendance'];
     timeOutAttendance = json['time_out_attendance'];
+    latLong = json['lat_long'];
+    radius = json['radius'];
   }
 
   Map<String, dynamic> toJson() {
@@ -50,6 +60,8 @@ class BranchModel {
       'address': address,
       'time_in_attendance': timeInAttendance,
       'time_out_attendance': timeOutAttendance,
+      'lat_long': latLong,
+      'radius': radius,
     };
   }
 }

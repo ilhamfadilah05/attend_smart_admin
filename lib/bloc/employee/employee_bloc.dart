@@ -11,12 +11,21 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
   final EmployeeRepository employeeRepo;
   EmployeeBloc(this.employeeRepo) : super(EmployeeLoadingState()) {
     on<EmployeeLoadedEvent>((event, emit) async {
-      final result = await employeeRepo.getEmployee();
+      final result = await employeeRepo.getEmployee(event.idCompany);
 
       if (result.length == 0) {
         emit(EmployeeEmptyState());
       } else {
         emit(EmployeeLoadedState(listEmployee: result));
+      }
+    });
+
+    on<EmployeeDeleteEvent>((event, emit) async {
+      final result = await employeeRepo.deleteEmployee(id: event.id);
+      if (result.runtimeType == String) {
+        emit(EmployeeDeleteErrorState(message: result));
+      } else {
+        emit(EmployeeDeleteSuccessState());
       }
     });
   }
@@ -30,9 +39,7 @@ class CreateEmployeeBloc
   CreateEmployeeBloc(this.employeeRepo) : super(CreateEmployeeInitialState()) {
     on<CreateEmployeeEvent>((event, emit) async {
       if (event is CreateEmployeeChangedEvent) {
-        emit(state.copyWith(
-          employee: event.employeeData,
-        ));
+        emit(state.copyWith(employee: event.employeeData, isUpdate: false));
       } else if (event is CreateEmployeeAddedEvent) {
         try {
           var randomString = getRandomString(10);
@@ -69,7 +76,8 @@ class CreateEmployeeBloc
       if (result.runtimeType == String) {
         emit(CreateEmployeeErrorState(message: result));
       } else {
-        emit(state.copyWith(employee: EmployeeModel.fromJson(result)));
+        emit(state.copyWith(
+            employee: EmployeeModel.fromJson(result), isUpdate: true));
       }
     });
   }

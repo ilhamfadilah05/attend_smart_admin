@@ -14,12 +14,14 @@ class FormGlobal extends StatelessWidget {
       this.onChanged,
       this.validator,
       this.keyboardType,
-      this.controller});
+      this.controller,
+      this.isDisabled = false});
   String? title;
   Function(String)? onChanged;
   String? Function(String?)? validator;
   TextInputType? keyboardType;
   TextEditingController? controller;
+  bool? isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class FormGlobal extends StatelessWidget {
         BlocBuilder<ThemeCubit, bool>(
           builder: (context, stateTheme) {
             return TextFormField(
-                autofocus: true,
+                enabled: !isDisabled!,
                 style: TextStyle(
                     fontFamily: 'quicksand',
                     fontSize: 12,
