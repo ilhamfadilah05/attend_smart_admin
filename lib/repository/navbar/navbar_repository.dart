@@ -31,7 +31,7 @@ List<NavbarModel> listNavbar() {
       name: 'histori',
       label: 'Histori Absen',
       icon: BoxIcons.bx_history,
-      href: '/histori',
+      href: '/history-attend',
     ),
     NavbarModel(
       name: 'cuti',

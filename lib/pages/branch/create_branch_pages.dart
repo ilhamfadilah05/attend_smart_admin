@@ -96,11 +96,13 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
 
   @override
   Widget build(BuildContext context) {
-    if (GoRouterState.of(context).uri.queryParameters['id'] != null &&
-        context.read<CreateBranchBloc>().state.branch == null) {
+    if (GoRouterState.of(context).matchedLocation.contains('/cabang/create')) {
+      context.read<CreateBranchBloc>().add(CreateBranchResetEvent());
+    } else {
       context.read<CreateBranchBloc>().add(CreateBranchByIdEvent(
           id: GoRouterState.of(context).uri.queryParameters['id']!));
     }
+
     return BlocBuilder<ThemeCubit, bool>(
       builder: (context, state) {
         return BlocListener<CreateBranchBloc, CreateBranchState>(
@@ -235,17 +237,21 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                                   ),
                             markers: Set<Marker>.of(marker.isEmpty == false
                                 ? marker
-                                : [
-                                    Marker(
-                                        markerId: MarkerId("1"),
-                                        position: LatLng(
-                                            double.parse(state.branch?.latLong!
-                                                    .split(',')[0] ??
-                                                '0'),
-                                            double.parse(state.branch?.latLong!
-                                                    .split(',')[1] ??
-                                                '0')))
-                                  ]),
+                                : state.branch?.latLong == null
+                                    ? []
+                                    : [
+                                        Marker(
+                                            markerId: MarkerId("1"),
+                                            position: LatLng(
+                                                double.parse(state
+                                                        .branch?.latLong!
+                                                        .split(',')[0] ??
+                                                    '0'),
+                                                double.parse(state
+                                                        .branch?.latLong!
+                                                        .split(',')[1] ??
+                                                    '0')))
+                                      ]),
                             onMapCreated: (GoogleMapController controller) {
                               _controller.complete(controller);
                             },
@@ -264,7 +270,9 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                       child: FormGlobal(
                         title: "Nama Cabang",
                         controller: state.isUpdate == false
-                            ? null
+                            ? state.formStatus is InitialFormStatus
+                                ? TextEditingController(text: '')
+                                : null
                             : TextEditingController(text: state.branch?.name),
                         onChanged: (p0) {
                           var empl = state.branch;
@@ -295,7 +303,9 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                       child: FormGlobal(
                         title: "Alamat Cabang",
                         controller: state.isUpdate == false
-                            ? null
+                            ? state.formStatus is InitialFormStatus
+                                ? TextEditingController(text: '')
+                                : null
                             : TextEditingController(
                                 text: state.branch?.address),
                         onChanged: (p0) {
@@ -425,7 +435,9 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                         title: "Radius Absensi",
                         keyboardType: TextInputType.number,
                         controller: state.isUpdate == false
-                            ? null
+                            ? state.formStatus is InitialFormStatus
+                                ? TextEditingController(text: '')
+                                : null
                             : TextEditingController(
                                 text: "${state.branch?.radius}"),
                         onChanged: (p0) {

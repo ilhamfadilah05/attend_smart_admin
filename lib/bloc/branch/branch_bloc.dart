@@ -1,3 +1,4 @@
+import 'package:attend_smart_admin/bloc/login/login_bloc.dart';
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/branch_model.dart';
@@ -32,13 +33,16 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
 }
 
 // Create Branch
-
 class CreateBranchBloc extends Bloc<CreateBranchEvent, CreateBranchState> {
   final BranchRepository branchRepo;
+
   CreateBranchBloc(this.branchRepo) : super(CreateBranchInitialState()) {
     on<CreateBranchEvent>((event, emit) async {
       if (event is CreateBranchChangedEvent) {
-        emit(state.copyWith(branch: event.branchData, isUpdate: false));
+        emit(state.copyWith(
+            branch: event.branchData,
+            isUpdate: false,
+            formStatus: ChangedFormStatus()));
       } else if (event is CreateBranchAddedEvent) {
         try {
           var randomString = getRandomString(10);
@@ -59,6 +63,7 @@ class CreateBranchBloc extends Bloc<CreateBranchEvent, CreateBranchState> {
           if (result.runtimeType == String) {
             emit(CreateBranchErrorState(message: state.errorMessage));
           } else {
+            emit(state.copyWith(branch: BranchModel()));
             emit(CreateBranchSuccessState(isUpdateBranch: isUpdateBranch));
           }
         } catch (e) {
@@ -73,8 +78,18 @@ class CreateBranchBloc extends Bloc<CreateBranchEvent, CreateBranchState> {
         emit(CreateBranchErrorState(message: result));
       } else {
         emit(state.copyWith(
-            branch: BranchModel.fromJson(result), isUpdate: true));
+            branch: BranchModel.fromJson(result),
+            isUpdate: true,
+            formStatus: ChangedFormStatus()));
       }
+    });
+
+    on<CreateBranchResetEvent>((event, emit) async {
+      emit(CreateBranchInitialState());
+      emit(state.copyWith(
+          isUpdate: false,
+          branch: BranchModel(),
+          formStatus: const InitialFormStatus()));
     });
   }
 }

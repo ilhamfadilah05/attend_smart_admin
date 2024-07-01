@@ -59,10 +59,13 @@ class _CreateEmployeePagesState extends State<CreateEmployeePages> {
 
   @override
   Widget build(BuildContext context) {
-    if (GoRouterState.of(context).uri.queryParameters['id'] != null) {
+    if (GoRouterState.of(context)
+        .matchedLocation
+        .contains('/karyawan/create')) {
+      context.read<CreateEmployeeBloc>().add(CreateEmployeeInitialEvent());
+    } else {
       context.read<CreateEmployeeBloc>().add(CreateEmployeeByIdEvent(
           id: GoRouterState.of(context).uri.queryParameters['id']!));
-      isUpdateEmployee = true;
     }
 
     return BlocBuilder<ThemeCubit, bool>(

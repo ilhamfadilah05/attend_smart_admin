@@ -49,27 +49,32 @@ final class DepartmentDeleteErrorState extends DepartmentState {
 
 class CreateDepartmentState extends Equatable {
   final DepartmentModel? department;
-
+  final FormSubmissionStatus formStatus;
   final String errorMessage;
   final bool isUpdate;
 
   const CreateDepartmentState(
-      {this.department, this.errorMessage = '', this.isUpdate = false});
+      {this.department,
+      this.errorMessage = '',
+      this.isUpdate = false,
+      this.formStatus = const InitialFormStatus()});
 
   CreateDepartmentState copyWith({
     DepartmentModel? department,
     String? errorMessage,
     bool? isUpdate,
+    FormSubmissionStatus? formStatus,
   }) {
     return CreateDepartmentState(
       department: department ?? department,
       errorMessage: errorMessage ?? this.errorMessage,
       isUpdate: isUpdate ?? this.isUpdate,
+      formStatus: formStatus ?? this.formStatus,
     );
   }
 
   @override
-  List<Object?> get props => [department, errorMessage];
+  List<Object?> get props => [department, errorMessage, isUpdate, formStatus];
 }
 
 final class CreateDepartmentErrorState extends CreateDepartmentState {

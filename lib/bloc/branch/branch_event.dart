@@ -44,6 +44,11 @@ class BranchDeleteEvent extends BranchEvent {
   List<Object> get props => [id];
 }
 
+
+
+
+
+
 // Create Branch
 sealed class CreateBranchEvent extends Equatable {
   const CreateBranchEvent();
@@ -75,6 +80,8 @@ class CreateBranchChangedEvent extends CreateBranchEvent {
   @override
   List<Object> get props => [branchData, isUpdate];
 }
+
+class CreateBranchResetEvent extends CreateBranchEvent {}
 
 class CreateEmplyeeErrorEvent extends CreateBranchEvent {
   final String message;

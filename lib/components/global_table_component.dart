@@ -30,6 +30,7 @@ class TableGlobal extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(5)),
             defaultColumnWidth: FixedColumnWidth(widthTable),
+            columnWidths: const {0: FixedColumnWidth(50)},
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             children: [TableRow(children: headers), ...data],
           ),

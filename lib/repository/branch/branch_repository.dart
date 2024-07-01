@@ -84,35 +84,39 @@ Future<List<TableRow>> listDataTableBranch(
                 const SizedBox(
                   width: 10,
                 ),
-                InkWell(
-                  onTap: () {
-                    dialogQuestion(context, onTapYes: () {
-                      context
-                          .read<BranchBloc>()
-                          .add(BranchDeleteEvent(id: dataBranch.id!));
-                      Navigator.pop(context);
-                    },
-                        icon: const Icon(
-                          Iconsax.trash_bold,
-                          color: Colors.red,
-                          size: 100,
+                dataBranch.isCentralBranch!
+                    ? Container(
+                        width: 20,
+                      )
+                    : InkWell(
+                        onTap: () {
+                          dialogQuestion(context, onTapYes: () {
+                            context
+                                .read<BranchBloc>()
+                                .add(BranchDeleteEvent(id: dataBranch.id!));
+                            Navigator.pop(context);
+                          },
+                              icon: const Icon(
+                                Iconsax.trash_bold,
+                                color: Colors.red,
+                                size: 100,
+                              ),
+                              message:
+                                  'Apakah anda yakin ingin menghapus ${dataBranch.name}?');
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: const Icon(
+                            Iconsax.trash_outline,
+                            size: 14,
+                            color: Colors.white,
+                          ),
                         ),
-                        message:
-                            'Apakah anda yakin ingin menghapus ${dataBranch.name}?');
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: const Icon(
-                      Iconsax.trash_outline,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
+                      )
               ],
             )),
       )

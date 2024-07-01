@@ -108,7 +108,9 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                 child: FormGlobal(
                   title: "Nama",
                   controller: state.isUpdate == false
-                      ? null
+                      ? state.formStatus is InitialFormStatus
+                          ? TextEditingController(text: '')
+                          : null
                       : TextEditingController(text: state.employee?.name),
                   onChanged: (p0) {
                     isUpdateEmployee = false;
@@ -141,7 +143,9 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                   title: "NIK",
                   keyboardType: TextInputType.number,
                   controller: state.isUpdate == false
-                      ? null
+                      ? state.formStatus is InitialFormStatus
+                          ? TextEditingController(text: '')
+                          : null
                       : TextEditingController(text: state.employee?.nik),
                   onChanged: (p0) {
                     var empl = state.employee;
@@ -176,7 +180,9 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                 child: FormGlobal(
                   title: "No. Handphone",
                   controller: state.isUpdate == false
-                      ? null
+                      ? state.formStatus is InitialFormStatus
+                          ? TextEditingController(text: '')
+                          : null
                       : TextEditingController(text: state.employee?.nohp),
                   keyboardType: TextInputType.number,
                   onChanged: (p0) {
@@ -208,7 +214,9 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                 child: FormGlobal(
                   title: "Alamat",
                   controller: state.isUpdate == false
-                      ? null
+                      ? state.formStatus is InitialFormStatus
+                          ? TextEditingController(text: '')
+                          : null
                       : TextEditingController(text: state.employee?.address),
                   onChanged: (p0) {
                     isUpdateEmployee = false;
@@ -308,7 +316,9 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                 child: FormGlobal(
                   title: "Total Cuti",
                   controller: state.isUpdate == false
-                      ? null
+                      ? state.formStatus is InitialFormStatus
+                          ? TextEditingController(text: '')
+                          : null
                       : TextEditingController(text: state.employee?.totalCuti),
                   onChanged: (p0) {
                     isUpdateEmployee = false;
@@ -335,7 +345,9 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                 child: FormGlobal(
                   title: "Sisa Cuti",
                   controller: state.isUpdate == false
-                      ? null
+                      ? state.formStatus is InitialFormStatus
+                          ? TextEditingController(text: '')
+                          : null
                       : TextEditingController(
                           text: state.employee?.remainingCuti),
                   onChanged: (p0) {

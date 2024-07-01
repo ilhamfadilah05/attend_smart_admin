@@ -7,6 +7,7 @@ class BranchModel {
   String? timeOutAttendance;
   String? latLong;
   int? radius;
+  bool? isCentralBranch;
 
   BranchModel({
     this.id,
@@ -17,18 +18,19 @@ class BranchModel {
     this.timeOutAttendance,
     this.latLong,
     this.radius,
+    this.isCentralBranch = false,
   });
 
-  BranchModel copyWith({
-    String? id,
-    String? idCompany,
-    String? name,
-    String? address,
-    String? timeInAttendance,
-    String? timeOutAttendance,
-    String? latLong,
-    int? radius,
-  }) {
+  BranchModel copyWith(
+      {String? id,
+      String? idCompany,
+      String? name,
+      String? address,
+      String? timeInAttendance,
+      String? timeOutAttendance,
+      String? latLong,
+      int? radius,
+      bool? isCentralBranch}) {
     return BranchModel(
       id: id ?? this.id,
       idCompany: idCompany ?? this.idCompany,
@@ -38,6 +40,7 @@ class BranchModel {
       timeOutAttendance: timeOutAttendance ?? this.timeOutAttendance,
       latLong: latLong ?? this.latLong,
       radius: radius ?? this.radius,
+      isCentralBranch: isCentralBranch ?? this.isCentralBranch,
     );
   }
 
@@ -50,6 +53,7 @@ class BranchModel {
     timeOutAttendance = json['time_out_attendance'];
     latLong = json['lat_long'];
     radius = json['radius'];
+    isCentralBranch = json['is_central_branch'];
   }
 
   Map<String, dynamic> toJson() {
@@ -62,6 +66,7 @@ class BranchModel {
       'time_out_attendance': timeOutAttendance,
       'lat_long': latLong,
       'radius': radius,
+      'is_central_branch': isCentralBranch,
     };
   }
 }

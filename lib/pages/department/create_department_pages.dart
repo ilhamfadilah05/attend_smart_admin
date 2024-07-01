@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
@@ -42,7 +43,9 @@ class _CreateDepartmentPagesState extends State<CreateDepartmentPages> {
 
   @override
   Widget build(BuildContext context) {
-    if (GoRouterState.of(context).uri.queryParameters['id'] != null) {
+    if (GoRouterState.of(context).matchedLocation.contains('/jabatan/create')) {
+      context.read<CreateDepartmentBloc>().add(CreateDepartmentInitialEvent());
+    } else {
       context.read<CreateDepartmentBloc>().add(CreateDepartmentByIdEvent(
           id: GoRouterState.of(context).uri.queryParameters['id']!));
     }
@@ -102,7 +105,9 @@ class _CreateDepartmentPagesState extends State<CreateDepartmentPages> {
                             FormGlobal(
                               title: "Nama Jabatan",
                               controller: state.isUpdate == false
-                                  ? null
+                                  ? state.formStatus is InitialFormStatus
+                                      ? TextEditingController(text: '')
+                                      : null
                                   : TextEditingController(
                                       text: state.department?.name),
                               onChanged: (p0) {

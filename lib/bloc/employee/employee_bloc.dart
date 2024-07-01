@@ -1,6 +1,8 @@
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
+import 'package:attend_smart_admin/pages/account/account_repository.dart';
 import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -39,7 +41,10 @@ class CreateEmployeeBloc
   CreateEmployeeBloc(this.employeeRepo) : super(CreateEmployeeInitialState()) {
     on<CreateEmployeeEvent>((event, emit) async {
       if (event is CreateEmployeeChangedEvent) {
-        emit(state.copyWith(employee: event.employeeData, isUpdate: false));
+        emit(state.copyWith(
+            employee: event.employeeData,
+            isUpdate: false,
+            formStatus: ChangedFormStatus()));
       } else if (event is CreateEmployeeAddedEvent) {
         try {
           var randomString = getRandomString(10);
@@ -50,11 +55,15 @@ class CreateEmployeeBloc
 
           var isUpdateEmployee = true;
 
+          var idEmployee = '';
+
           if (employeeData?.id == null) {
             employeeData?.id =
                 'employee_${event.accountData.idCompany}_$randomString';
             isUpdateEmployee = false;
           }
+
+          idEmployee = employeeData?.id ?? '';
 
           var result =
               await employeeRepo.addEmployee(employee: state.employee!);
@@ -62,6 +71,19 @@ class CreateEmployeeBloc
           if (result.runtimeType == String) {
             emit(CreateEmployeeErrorState(message: state.errorMessage));
           } else {
+            var accountData = AccountModel(
+              id: 'account_${event.accountData.idCompany}_$randomString',
+              name: event.employeeData.name,
+              email:
+                  '${event.employeeData.name?.replaceAll(' ', '').toLowerCase()}${getRandomString(3)}@${event.accountData.idCompany?.toLowerCase()}.com',
+              password: 'MTIzNDU2Nzg=', // 12345678,
+              idCompany: event.accountData.idCompany,
+              idEmployee: idEmployee,
+              nameCompany: event.accountData.nameCompany,
+              createdAt: DateTime.now().toString(),
+              role: 'employee',
+            );
+            AccountRepository().createAccount(accountData);
             emit(
                 CreateEmployeeSuccessState(isUpdateEmployee: isUpdateEmployee));
           }
@@ -71,13 +93,22 @@ class CreateEmployeeBloc
       }
     });
 
+    on<CreateEmployeeInitialEvent>((event, emit) async {
+      emit(state.copyWith(
+          employee: EmployeeModel(),
+          isUpdate: false,
+          formStatus: const InitialFormStatus()));
+    });
+
     on<CreateEmployeeByIdEvent>((event, emit) async {
       var result = await employeeRepo.getEmployeeById(id: event.id);
       if (result.runtimeType == String) {
         emit(CreateEmployeeErrorState(message: result));
       } else {
         emit(state.copyWith(
-            employee: EmployeeModel.fromJson(result), isUpdate: true));
+            employee: EmployeeModel.fromJson(result),
+            isUpdate: true,
+            formStatus: ChangedFormStatus()));
       }
     });
   }

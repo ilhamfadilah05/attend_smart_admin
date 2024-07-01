@@ -32,10 +32,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             emit: emit);
         if (result != null) {
           AccountModel account = AccountModel.fromJson(result[0].data());
-          emit(state.copyWith(
-            formStatus: SubmissionSuccess(),
-            account: account,
-          ));
+          if (account.role == 'super_admin') {
+            emit(state.copyWith(
+              formStatus: SubmissionSuccess(),
+              account: account,
+            ));
+          } else {
+            emit(state.copyWith(
+                formStatus: SubmissionFailed(),
+                errorMessage: 'Akun anda tidak berhak mengakses web ini!'));
+          }
         }
       } catch (e) {
         emit(state.copyWith(

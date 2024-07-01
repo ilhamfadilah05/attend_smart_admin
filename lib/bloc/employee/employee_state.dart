@@ -44,27 +44,32 @@ final class EmployeeDeleteErrorState extends EmployeeState {
 
 class CreateEmployeeState extends Equatable {
   final EmployeeModel? employee;
-
+  final FormSubmissionStatus formStatus;
   final String errorMessage;
   final bool isUpdate;
 
   const CreateEmployeeState(
-      {this.employee, this.errorMessage = '', this.isUpdate = false});
+      {this.employee,
+      this.errorMessage = '',
+      this.isUpdate = false,
+      this.formStatus = const InitialFormStatus()});
 
   CreateEmployeeState copyWith({
     EmployeeModel? employee,
     String? errorMessage,
     bool? isUpdate,
+    FormSubmissionStatus? formStatus,
   }) {
     return CreateEmployeeState(
       employee: employee ?? employee,
       errorMessage: errorMessage ?? this.errorMessage,
       isUpdate: isUpdate ?? this.isUpdate,
+      formStatus: formStatus ?? this.formStatus,
     );
   }
 
   @override
-  List<Object?> get props => [employee, errorMessage];
+  List<Object?> get props => [employee, errorMessage, isUpdate, formStatus];
 }
 
 final class CreateEmployeeErrorState extends CreateEmployeeState {

@@ -180,7 +180,7 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                                 widthTable:
                                     MediaQuery.of(context).size.width <= 800
                                         ? 220
-                                        : 400);
+                                        : 550);
                           }
 
                           return Center(child: TextGlobal(message: 'message'));

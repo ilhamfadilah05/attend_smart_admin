@@ -79,28 +79,43 @@ final class BranchDeleteErrorState extends BranchState {
 
 class CreateBranchState extends Equatable {
   final BranchModel? branch;
+  final FormSubmissionStatus formStatus;
 
   final String errorMessage;
   final bool isUpdate;
 
   const CreateBranchState(
-      {this.branch, this.errorMessage = '', this.isUpdate = false});
+      {this.branch,
+      this.errorMessage = '',
+      this.isUpdate = false,
+      this.formStatus = const InitialFormStatus()});
 
-  CreateBranchState copyWith({
-    BranchModel? branch,
-    String? errorMessage,
-    bool? isUpdate,
-  }) {
+  CreateBranchState copyWith(
+      {BranchModel? branch,
+      String? errorMessage,
+      bool? isUpdate,
+      FormSubmissionStatus? formStatus}) {
     return CreateBranchState(
       branch: branch ?? branch,
       errorMessage: errorMessage ?? this.errorMessage,
       isUpdate: isUpdate ?? this.isUpdate,
+      formStatus: formStatus ?? this.formStatus,
     );
   }
 
   @override
-  List<Object?> get props => [branch, errorMessage];
+  List<Object?> get props => [branch, errorMessage, isUpdate, formStatus];
 }
+
+abstract class FormSubmissionStatus {
+  const FormSubmissionStatus();
+}
+
+class InitialFormStatus extends FormSubmissionStatus {
+  const InitialFormStatus();
+}
+
+class ChangedFormStatus extends FormSubmissionStatus {}
 
 final class CreateBranchErrorState extends CreateBranchState {
   final String message;

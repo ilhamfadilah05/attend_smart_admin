@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
-import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
+import 'package:attend_smart_admin/bloc/history-attend/history_attend_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
@@ -10,20 +10,20 @@ import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_table_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
-import 'package:attend_smart_admin/repository/Branch/Branch_repository.dart';
+import 'package:attend_smart_admin/repository/history-attend/history_attend_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class BranchPages extends StatefulWidget {
-  const BranchPages({super.key});
+class HistoryAttendPages extends StatefulWidget {
+  const HistoryAttendPages({super.key});
 
   @override
-  State<BranchPages> createState() => _BranchPagesState();
+  State<HistoryAttendPages> createState() => _HistoryAttendPagesState();
 }
 
-class _BranchPagesState extends State<BranchPages> {
+class _HistoryAttendPagesState extends State<HistoryAttendPages> {
   var accountData = AccountModel();
   var page = 1;
 
@@ -40,8 +40,8 @@ class _BranchPagesState extends State<BranchPages> {
       context.pushReplacement('/login');
     } else {
       context
-          .read<BranchBloc>()
-          .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
+          .read<HistoryAttendBloc>()
+          .add(HistoryAttendLoadedEvent(idCompany: accountData.idCompany!));
     }
   }
 
@@ -49,17 +49,16 @@ class _BranchPagesState extends State<BranchPages> {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, bool>(
       builder: (context, state) {
-        return BlocListener<BranchBloc, BranchState>(
+        return BlocListener<HistoryAttendBloc, HistoryAttendState>(
           listener: (context, state) {
-            if (state is BranchDeleteSuccessState) {
+            if (state is HistoryAttendDeleteSuccessState) {
               alertNotification(
                   context: context,
                   type: 'success',
                   message: 'Berhasil menghapus data cabang.',
                   title: 'Berhasil!');
-              context
-                  .read<BranchBloc>()
-                  .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
+              context.read<HistoryAttendBloc>().add(
+                  HistoryAttendLoadedEvent(idCompany: accountData.idCompany!));
             }
           },
           child: Container(
@@ -72,7 +71,7 @@ class _BranchPagesState extends State<BranchPages> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextGlobal(
-                  message: 'Cabang',
+                  message: 'Histori Absensi',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -80,8 +79,8 @@ class _BranchPagesState extends State<BranchPages> {
                   height: 10,
                 ),
                 const BreadCrumbGlobal(
-                  firstHref: '/cabang/page',
-                  firstTitle: 'Cabang',
+                  firstHref: '/history-attend/page',
+                  firstTitle: 'Histori Absensi',
                   typeBreadcrumb: 'List',
                 ),
                 const SizedBox(
@@ -92,9 +91,9 @@ class _BranchPagesState extends State<BranchPages> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ButtonGlobal(
-                            message: 'Tambah Cabang',
+                            message: 'Tambah Histori',
                             onPressed: () {
-                              context.namedLocation('/cabang/create');
+                              context.namedLocation('/history-attend/create');
                             },
                             colorBtn: blueDefaultLight,
                           ),
@@ -111,9 +110,9 @@ class _BranchPagesState extends State<BranchPages> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ButtonGlobal(
-                            message: 'Tambah Cabang',
+                            message: 'Tambah Histori Absensi',
                             onPressed: () {
-                              context.go('/cabang/create');
+                              context.go('/history-attend/create');
                             },
                             colorBtn: blueDefaultLight,
                           ),
@@ -126,13 +125,13 @@ class _BranchPagesState extends State<BranchPages> {
                 const SizedBox(
                   height: 20,
                 ),
-                BlocBuilder<BranchBloc, BranchState>(
+                BlocBuilder<HistoryAttendBloc, HistoryAttendState>(
                   builder: (context, state) {
-                    if (state is BranchLoadingState) {
+                    if (state is HistoryAttendLoadingState) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is BranchErrorState) {
+                    } else if (state is HistoryAttendErrorState) {
                       return Container();
-                    } else if (state is BranchEmptyState) {
+                    } else if (state is HistoryAttendEmptyState) {
                       return Center(
                         child: SizedBox(
                           child: Column(
@@ -153,9 +152,10 @@ class _BranchPagesState extends State<BranchPages> {
                           ),
                         ),
                       );
-                    } else if (state is BranchLoadedState) {
+                    } else if (state is HistoryAttendLoadedState) {
                       return FutureBuilder(
-                        future: listDataTableBranch(state.listBranch, context),
+                        future: listDataTableHistoryAttend(
+                            state.listHistoryAttend, context),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -163,24 +163,24 @@ class _BranchPagesState extends State<BranchPages> {
                           } else if (snapshot.hasError) {
                             return Container();
                           } else if (snapshot.hasData) {
-                            var listDataBranch = snapshot.data;
+                            var listDataHistoryAttend = snapshot.data;
                             return TableGlobal(
-                                data: listDataBranch!,
-                                headers: listHeaderTableBranch,
+                                data: listDataHistoryAttend!,
+                                headers: listHeaderTableHistoryAttend,
                                 page: page,
                                 pageChanged: (p0) {
                                   setState(() {
                                     page = p0;
                                   });
-                                  context.read<BranchBloc>().add(
-                                      BranchLoadedEvent(
+                                  context.read<HistoryAttendBloc>().add(
+                                      HistoryAttendLoadedEvent(
                                           idCompany: accountData.idCompany!));
                                 },
                                 pageTotal: 0,
                                 widthTable:
                                     MediaQuery.of(context).size.width <= 800
-                                        ? 200
-                                        : 400);
+                                        ? 150
+                                        : 200);
                           }
 
                           return Center(child: TextGlobal(message: 'message'));

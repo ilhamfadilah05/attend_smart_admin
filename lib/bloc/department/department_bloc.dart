@@ -1,3 +1,4 @@
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/department_model.dart';
@@ -46,7 +47,7 @@ class CreateDepartmentBloc
       : super(CreateDepartmentInitialState()) {
     on<CreateDepartmentEvent>((event, emit) async {
       if (event is CreateDepartmentChangedEvent) {
-        emit(state.copyWith(department: event.departmentData, isUpdate: false));
+        emit(state.copyWith(department: event.departmentData, isUpdate: false,formStatus: ChangedFormStatus()));
       } else if (event is CreateDepartmentAddedEvent) {
         try {
           var randomString = getRandomString(10);
@@ -77,13 +78,22 @@ class CreateDepartmentBloc
       }
     });
 
+    on<CreateDepartmentInitialEvent>((event, emit) async {
+      emit(state.copyWith(
+          department: DepartmentModel(),
+          isUpdate: false,
+          formStatus: const InitialFormStatus()));
+    });
+
     on<CreateDepartmentByIdEvent>((event, emit) async {
       var result = await departmentRepo.getDepartmentById(id: event.id);
       if (result.runtimeType == String) {
         emit(CreateDepartmentErrorState(message: result));
       } else {
         emit(state.copyWith(
-            department: DepartmentModel.fromJson(result), isUpdate: true));
+            department: DepartmentModel.fromJson(result),
+            isUpdate: true,
+            formStatus: ChangedFormStatus()));
       }
     });
   }
