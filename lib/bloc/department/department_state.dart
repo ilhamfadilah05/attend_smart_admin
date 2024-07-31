@@ -1,5 +1,6 @@
 part of 'department_bloc.dart';
 
+
 sealed class DepartmentState extends Equatable {
   const DepartmentState();
 
@@ -7,32 +8,27 @@ sealed class DepartmentState extends Equatable {
   List<Object> get props => [];
 }
 
-final class DepartmentInitialState extends DepartmentState {}
-
 final class DepartmentLoadingState extends DepartmentState {}
 
 final class DepartmentLoadedState extends DepartmentState {
-  final List<DepartmentModel> listDepartments;
-  final int totalData;
-  final Map<String, dynamic> lastData;
-  const DepartmentLoadedState(
-      {required this.listDepartments,
-      required this.totalData,
-      required this.lastData});
+  final List<DepartmentModel> listDepartment;
+
+  const DepartmentLoadedState({required this.listDepartment});
 
   @override
-  List<Object> get props => [listDepartments, totalData, lastData];
+  List<Object> get props => [listDepartment];
 }
+
+final class DepartmentEmptyState extends DepartmentState {}
 
 final class DepartmentErrorState extends DepartmentState {
   final String message;
+
   const DepartmentErrorState({required this.message});
 
   @override
   List<Object> get props => [message];
 }
-
-final class DepartmentEmptyState extends DepartmentState {}
 
 final class DepartmentDeleteSuccessState extends DepartmentState {}
 
@@ -45,7 +41,7 @@ final class DepartmentDeleteErrorState extends DepartmentState {
   List<Object> get props => [message];
 }
 
-// Create Department
+// Create Department State
 
 class CreateDepartmentState extends Equatable {
   final DepartmentModel? department;

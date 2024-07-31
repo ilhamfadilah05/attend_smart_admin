@@ -1,4 +1,3 @@
-import 'package:attend_smart_admin/bloc/login/login_bloc.dart';
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/branch_model.dart';
@@ -6,23 +5,26 @@ import 'package:attend_smart_admin/repository/branch/branch_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../history-attend/history_attend_bloc.dart';
+
 part 'branch_event.dart';
 part 'branch_state.dart';
 
 class BranchBloc extends Bloc<BranchEvent, BranchState> {
-  BranchRepository? branchRepository;
-  BranchBloc(this.branchRepository) : super(BranchInitialState()) {
+  final BranchRepository branchRepo;
+  BranchBloc(this.branchRepo) : super(BranchLoadingState()) {
     on<BranchLoadedEvent>((event, emit) async {
-      var result = await branchRepository?.getBranch(event.idCompany);
-      if (result.runtimeType == List<BranchModel>) {
-        emit(BranchLoadedState(listBranch: result));
+      final result = await branchRepo.getBranch(event.idCompany);
+
+      if (result.length == 0) {
+        emit(BranchEmptyState());
       } else {
-        emit(BranchErrorState(message: result));
+        emit(BranchLoadedState(listBranch: result));
       }
     });
 
     on<BranchDeleteEvent>((event, emit) async {
-      final result = await branchRepository?.deleteBranch(id: event.id);
+      final result = await branchRepo.deleteBranch(id: event.id);
       if (result.runtimeType == String) {
         emit(BranchDeleteErrorState(message: result));
       } else {
@@ -32,10 +34,10 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
   }
 }
 
-// Create Branch
+//Create Branch
+
 class CreateBranchBloc extends Bloc<CreateBranchEvent, CreateBranchState> {
   final BranchRepository branchRepo;
-
   CreateBranchBloc(this.branchRepo) : super(CreateBranchInitialState()) {
     on<CreateBranchEvent>((event, emit) async {
       if (event is CreateBranchChangedEvent) {
@@ -63,13 +65,19 @@ class CreateBranchBloc extends Bloc<CreateBranchEvent, CreateBranchState> {
           if (result.runtimeType == String) {
             emit(CreateBranchErrorState(message: state.errorMessage));
           } else {
-            emit(state.copyWith(branch: BranchModel()));
             emit(CreateBranchSuccessState(isUpdateBranch: isUpdateBranch));
           }
         } catch (e) {
           emit(CreateBranchErrorState(message: e.toString()));
         }
       }
+    });
+
+    on<CreateBranchInitialEvent>((event, emit) async {
+      emit(state.copyWith(
+          branch: BranchModel(),
+          isUpdate: false,
+          formStatus: const InitialFormStatus()));
     });
 
     on<CreateBranchByIdEvent>((event, emit) async {
@@ -82,14 +90,6 @@ class CreateBranchBloc extends Bloc<CreateBranchEvent, CreateBranchState> {
             isUpdate: true,
             formStatus: ChangedFormStatus()));
       }
-    });
-
-    on<CreateBranchResetEvent>((event, emit) async {
-      emit(CreateBranchInitialState());
-      emit(state.copyWith(
-          isUpdate: false,
-          branch: BranchModel(),
-          formStatus: const InitialFormStatus()));
     });
   }
 }

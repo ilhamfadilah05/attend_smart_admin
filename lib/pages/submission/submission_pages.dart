@@ -1,29 +1,28 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
-import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
+import 'package:attend_smart_admin/bloc/submission/submission_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
-import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_table_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
-import 'package:attend_smart_admin/repository/department/department_repository.dart';
+import 'package:attend_smart_admin/repository/submission/submission_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class DepartmentPages extends StatefulWidget {
-  const DepartmentPages({super.key});
+class SubmissionPages extends StatefulWidget {
+  const SubmissionPages({super.key});
 
   @override
-  State<DepartmentPages> createState() => _DepartmentPagesState();
+  State<SubmissionPages> createState() => _SubmissionPagesState();
 }
 
-class _DepartmentPagesState extends State<DepartmentPages> {
+class _SubmissionPagesState extends State<SubmissionPages> {
   var accountData = AccountModel();
   var page = 1;
 
@@ -39,9 +38,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
     if (accountData.idCompany == null) {
       context.pushReplacement('/login');
     } else {
-      context.read<DepartmentBloc>().add(DepartmentLoadedEvent(
-            idCompany: accountData.idCompany!,
-          ));
+      context
+          .read<SubmissionBloc>()
+          .add(SubmissionLoadedEvent(idCompany: accountData.idCompany!));
     }
   }
 
@@ -49,17 +48,16 @@ class _DepartmentPagesState extends State<DepartmentPages> {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, bool>(
       builder: (context, state) {
-        return BlocListener<DepartmentBloc, DepartmentState>(
+        return BlocListener<SubmissionBloc, SubmissionState>(
           listener: (context, state) {
-            if (state is DepartmentDeleteSuccessState) {
+            if (state is SubmissionDeleteSuccessState) {
               alertNotification(
                   context: context,
                   type: 'success',
                   message: 'Berhasil menghapus data jabatan.',
                   title: 'Berhasil!');
-              context.read<DepartmentBloc>().add(DepartmentLoadedEvent(
-                    idCompany: accountData.idCompany!,
-                  ));
+              context.read<SubmissionBloc>().add(
+                  SubmissionLoadedEvent(idCompany: accountData.idCompany!));
             }
           },
           child: Container(
@@ -72,7 +70,7 @@ class _DepartmentPagesState extends State<DepartmentPages> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextGlobal(
-                  message: 'Jabatan',
+                  message: 'Pengajuan',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -80,59 +78,20 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                   height: 10,
                 ),
                 const BreadCrumbGlobal(
-                  firstHref: '/jabatan/page',
-                  firstTitle: 'Jabatan',
+                  firstHref: '/pengajuan/page',
+                  firstTitle: 'Pengajuan',
                   typeBreadcrumb: 'List',
                 ),
                 const SizedBox(
                   height: 40,
                 ),
-                MediaQuery.of(context).size.width <= 800
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ButtonGlobal(
-                            message: 'Tambah Jabatan',
-                            onPressed: () {
-                              context.namedLocation('/jabatan/create');
-                            },
-                            colorBtn: blueDefaultLight,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          ButtonGlobal(
-                            message: 'Filter',
-                            onPressed: () {},
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ButtonGlobal(
-                            message: 'Tambah Jabatan',
-                            onPressed: () {
-                              context.go('/jabatan/create');
-                            },
-                            colorBtn: blueDefaultLight,
-                          ),
-                          ButtonGlobal(
-                            message: 'Filter',
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                const SizedBox(
-                  height: 20,
-                ),
-                BlocBuilder<DepartmentBloc, DepartmentState>(
+                BlocBuilder<SubmissionBloc, SubmissionState>(
                   builder: (context, state) {
-                    if (state is DepartmentLoadingState) {
+                    if (state is SubmissionLoadingState) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is DepartmentErrorState) {
+                    } else if (state is SubmissionErrorState) {
                       return Container();
-                    } else if (state is DepartmentEmptyState) {
+                    } else if (state is SubmissionEmptyState) {
                       return Center(
                         child: SizedBox(
                           child: Column(
@@ -146,17 +105,17 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                                 height: 20,
                               ),
                               TextGlobal(
-                                message: "Data karyawan tidak ditemukan",
+                                message: "Data Pengajuan tidak ditemukan",
                                 colorText: Colors.grey,
                               ),
                             ],
                           ),
                         ),
                       );
-                    } else if (state is DepartmentLoadedState) {
+                    } else if (state is SubmissionLoadedState) {
                       return FutureBuilder(
-                        future: listDataTableDepartment(
-                            state.listDepartment, context),
+                        future: listDataTableSubmission(
+                            state.listSubmission, context),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -164,26 +123,26 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                           } else if (snapshot.hasError) {
                             return Container();
                           } else if (snapshot.hasData) {
-                            var listDataDepartment = snapshot.data;
+                            var listDataSubmission = snapshot.data;
                             return TableGlobal(
-                                data: listDataDepartment!,
-                                headers: listHeaderTableDepartment,
+                                data: listDataSubmission!,
+                                headers: listHeaderTableSubmission,
                                 page: page,
                                 pageChanged: (p0) {
                                   setState(() {
                                     page = p0;
                                   });
                                   context
-                                      .read<DepartmentBloc>()
-                                      .add(DepartmentLoadedEvent(
+                                      .read<SubmissionBloc>()
+                                      .add(SubmissionLoadedEvent(
                                         idCompany: accountData.idCompany!,
                                       ));
                                 },
-                                pageTotal: state.listDepartment.length,
+                                pageTotal: state.listSubmission.length,
                                 widthTable:
                                     MediaQuery.of(context).size.width <= 800
-                                        ? 220
-                                        : 550);
+                                        ? 100
+                                        : 190);
                           }
 
                           return Center(child: TextGlobal(message: 'message'));

@@ -7,12 +7,12 @@ sealed class HistoryAttendEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class HistoryAttendLoadingEvent extends HistoryAttendEvent {}
+
 class HistoryAttendLoadedEvent extends HistoryAttendEvent {
   final String idCompany;
 
-  const HistoryAttendLoadedEvent({
-    required this.idCompany,
-  });
+  const HistoryAttendLoadedEvent({required this.idCompany});
 
   @override
   List<Object> get props => [idCompany];
@@ -27,7 +27,8 @@ class HistoryAttendDeleteEvent extends HistoryAttendEvent {
   List<Object> get props => [id];
 }
 
-// Create HistoryAttend
+// Create HistoryAttend Event
+
 sealed class CreateHistoryAttendEvent extends Equatable {
   const CreateHistoryAttendEvent();
 
@@ -58,8 +59,6 @@ class CreateHistoryAttendChangedEvent extends CreateHistoryAttendEvent {
   @override
   List<Object> get props => [historyAttendData, isUpdate];
 }
-
-class CreateHistoryAttendResetEvent extends CreateHistoryAttendEvent {}
 
 class CreateEmplyeeErrorEvent extends CreateHistoryAttendEvent {
   final String message;

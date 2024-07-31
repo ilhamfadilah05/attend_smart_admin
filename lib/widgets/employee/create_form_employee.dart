@@ -6,6 +6,7 @@ import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
 import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
 import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
+import 'package:attend_smart_admin/bloc/history-attend/history_attend_bloc.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_dropdown_button_component.dart';
@@ -379,7 +380,7 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                 builder: (context, stateDepartment) {
                   var listDepartment = <String>[];
                   if (stateDepartment is DepartmentLoadedState) {
-                    for (var a in stateDepartment.listDepartments) {
+                    for (var a in stateDepartment.listDepartment) {
                       listDepartment.add(a.name!);
                     }
                   }
@@ -390,7 +391,7 @@ Form dataFormEmployeeZZ(BuildContext context, CreateEmployeeState state,
                     onChanged: (p0) {
                       var empl = state.employee;
                       if (stateDepartment is DepartmentLoadedState) {
-                        for (var a in stateDepartment.listDepartments) {
+                        for (var a in stateDepartment.listDepartment) {
                           if (a.name == p0) {
                             if (empl == null) {
                               empl = EmployeeModel(department: a.name);

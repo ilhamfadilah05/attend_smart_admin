@@ -120,21 +120,6 @@ class DepartmentRepository {
           .where('id_company', isEqualTo: idCompany)
           .get();
 
-      // if (lasData.isNotEmpty) {
-      //   var getLastDocs = await firestore
-      //       .collection('department')
-      //       .where('id', isEqualTo: lasData['id'])
-      //       .limit(5)
-      //       .get();
-
-      //   result = await firestore
-      //       .collection('department')
-      //       .where('id_company', isEqualTo: idCompany)
-      //       .startAfterDocument(getLastDocs.docs[0])
-      //       .limit(5)
-      //       .get();
-      // }
-
       var listDepartment = <DepartmentModel>[];
       for (var i = 0; i < result.docs.length; i++) {
         var data = result.docs[i].data();

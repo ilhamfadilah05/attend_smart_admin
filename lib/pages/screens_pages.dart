@@ -10,6 +10,8 @@ import 'package:attend_smart_admin/pages/employee/create_employee_pages.dart';
 import 'package:attend_smart_admin/pages/employee/employee_pages.dart';
 import 'package:attend_smart_admin/pages/history-attend/create_history_attend_pages.dart';
 import 'package:attend_smart_admin/pages/history-attend/history_attend_pages.dart';
+import 'package:attend_smart_admin/pages/submission/create_submission_pages.dart';
+import 'package:attend_smart_admin/pages/submission/submission_pages.dart';
 import 'package:attend_smart_admin/widgets/navbar/navbar.dart';
 import 'package:attend_smart_admin/widgets/screens/headers.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +121,11 @@ class _ScreensPagesState extends State<ScreensPages> {
                                                               .contains('/history-attend/edit')
                                                       ? const CreateHistoryAttendPages()
                                                       : const HistoryAttendPages()
-                                                  : Container()
+                                                  : GoRouterState.of(context).matchedLocation.contains('/pengajuan')
+                                                      ? GoRouterState.of(context).matchedLocation.contains('/pengajuan/create') || GoRouterState.of(context).matchedLocation.contains('/pengajuan/edit')
+                                                          ? const CreateSubmissionPages()
+                                                          : const SubmissionPages()
+                                                      : Container()
                                 ],
                               ),
                             ))

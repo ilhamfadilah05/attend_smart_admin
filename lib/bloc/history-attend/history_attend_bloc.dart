@@ -9,20 +9,21 @@ part 'history_attend_event.dart';
 part 'history_attend_state.dart';
 
 class HistoryAttendBloc extends Bloc<HistoryAttendEvent, HistoryAttendState> {
-  HistoryAttendRepository? historyAttendRepo;
+  final HistoryAttendRepository historyAttendRepo;
   HistoryAttendBloc(this.historyAttendRepo)
-      : super(HistoryAttendInitialState()) {
+      : super(HistoryAttendLoadingState()) {
     on<HistoryAttendLoadedEvent>((event, emit) async {
-      var result = await historyAttendRepo?.getHistoryAttend(event.idCompany);
-      if (result.runtimeType == List<HistoryAttendModel>) {
-        emit(HistoryAttendLoadedState(listHistoryAttend: result));
+      final result = await historyAttendRepo.getHistoryAttend(event.idCompany);
+
+      if (result.length == 0) {
+        emit(HistoryAttendEmptyState());
       } else {
-        emit(HistoryAttendErrorState(message: result));
+        emit(HistoryAttendLoadedState(listHistoryAttend: result));
       }
     });
 
     on<HistoryAttendDeleteEvent>((event, emit) async {
-      final result = await historyAttendRepo?.deleteHistoryAttend(id: event.id);
+      final result = await historyAttendRepo.deleteHistoryAttend(id: event.id);
       if (result.runtimeType == String) {
         emit(HistoryAttendDeleteErrorState(message: result));
       } else {
@@ -32,11 +33,11 @@ class HistoryAttendBloc extends Bloc<HistoryAttendEvent, HistoryAttendState> {
   }
 }
 
-// Create HistoryAttend
+//Create HistoryAttend
+
 class CreateHistoryAttendBloc
     extends Bloc<CreateHistoryAttendEvent, CreateHistoryAttendState> {
   final HistoryAttendRepository historyAttendRepo;
-
   CreateHistoryAttendBloc(this.historyAttendRepo)
       : super(CreateHistoryAttendInitialState()) {
     on<CreateHistoryAttendEvent>((event, emit) async {
@@ -66,7 +67,6 @@ class CreateHistoryAttendBloc
           if (result.runtimeType == String) {
             emit(CreateHistoryAttendErrorState(message: state.errorMessage));
           } else {
-            emit(state.copyWith(historyAttend: HistoryAttendModel()));
             emit(CreateHistoryAttendSuccessState(
                 isUpdateHistoryAttend: isUpdateHistoryAttend));
           }
@@ -74,6 +74,13 @@ class CreateHistoryAttendBloc
           emit(CreateHistoryAttendErrorState(message: e.toString()));
         }
       }
+    });
+
+    on<CreateHistoryAttendInitialEvent>((event, emit) async {
+      emit(state.copyWith(
+          historyAttend: HistoryAttendModel(),
+          isUpdate: false,
+          formStatus: const InitialFormStatus()));
     });
 
     on<CreateHistoryAttendByIdEvent>((event, emit) async {
@@ -86,14 +93,6 @@ class CreateHistoryAttendBloc
             isUpdate: true,
             formStatus: ChangedFormStatus()));
       }
-    });
-
-    on<CreateHistoryAttendResetEvent>((event, emit) async {
-      emit(CreateHistoryAttendInitialState());
-      emit(state.copyWith(
-          isUpdate: false,
-          historyAttend: HistoryAttendModel(),
-          formStatus: const InitialFormStatus()));
     });
   }
 }

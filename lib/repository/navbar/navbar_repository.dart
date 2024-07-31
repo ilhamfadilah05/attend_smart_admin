@@ -35,15 +35,9 @@ List<NavbarModel> listNavbar() {
     ),
     NavbarModel(
       name: 'cuti',
-      label: 'Cuti / Izin / Sakit',
+      label: 'Pengajuan',
       icon: Iconsax.pen_remove_outline,
-      href: '/cuti',
-    ),
-    NavbarModel(
-      name: 'lokasi',
-      label: 'Lokasi Kantor',
-      icon: Iconsax.location_outline,
-      href: '/lokasi',
+      href: '/pengajuan',
     ),
     NavbarModel(
       name: 'broadcast',

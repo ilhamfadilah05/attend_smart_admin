@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:number_pagination/number_pagination.dart';
 
 class TableGlobal extends StatelessWidget {
   const TableGlobal(

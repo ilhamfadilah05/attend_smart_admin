@@ -7,29 +7,27 @@ sealed class HistoryAttendState extends Equatable {
   List<Object> get props => [];
 }
 
-final class HistoryAttendInitialState extends HistoryAttendState {}
-
 final class HistoryAttendLoadingState extends HistoryAttendState {}
 
 final class HistoryAttendLoadedState extends HistoryAttendState {
   final List<HistoryAttendModel> listHistoryAttend;
-  const HistoryAttendLoadedState({
-    required this.listHistoryAttend,
-  });
+
+  const HistoryAttendLoadedState({required this.listHistoryAttend});
 
   @override
   List<Object> get props => [listHistoryAttend];
 }
 
+final class HistoryAttendEmptyState extends HistoryAttendState {}
+
 final class HistoryAttendErrorState extends HistoryAttendState {
   final String message;
+
   const HistoryAttendErrorState({required this.message});
 
   @override
   List<Object> get props => [message];
 }
-
-final class HistoryAttendEmptyState extends HistoryAttendState {}
 
 final class HistoryAttendDeleteSuccessState extends HistoryAttendState {}
 
@@ -42,12 +40,11 @@ final class HistoryAttendDeleteErrorState extends HistoryAttendState {
   List<Object> get props => [message];
 }
 
-// Create HistoryAttend
+// Create HistoryAttend State
 
 class CreateHistoryAttendState extends Equatable {
   final HistoryAttendModel? historyAttend;
   final FormSubmissionStatus formStatus;
-
   final String errorMessage;
   final bool isUpdate;
 
@@ -57,11 +54,12 @@ class CreateHistoryAttendState extends Equatable {
       this.isUpdate = false,
       this.formStatus = const InitialFormStatus()});
 
-  CreateHistoryAttendState copyWith(
-      {HistoryAttendModel? historyAttend,
-      String? errorMessage,
-      bool? isUpdate,
-      FormSubmissionStatus? formStatus}) {
+  CreateHistoryAttendState copyWith({
+    HistoryAttendModel? historyAttend,
+    String? errorMessage,
+    bool? isUpdate,
+    FormSubmissionStatus? formStatus,
+  }) {
     return CreateHistoryAttendState(
       historyAttend: historyAttend ?? historyAttend,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -71,19 +69,8 @@ class CreateHistoryAttendState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [historyAttend, errorMessage, isUpdate, formStatus];
+  List<Object?> get props => [historyAttend, errorMessage, isUpdate, formStatus];
 }
-
-abstract class FormSubmissionStatus {
-  const FormSubmissionStatus();
-}
-
-class InitialFormStatus extends FormSubmissionStatus {
-  const InitialFormStatus();
-}
-
-class ChangedFormStatus extends FormSubmissionStatus {}
 
 final class CreateHistoryAttendErrorState extends CreateHistoryAttendState {
   final String message;
@@ -108,3 +95,13 @@ final class CreateHistoryAttendSuccessState extends CreateHistoryAttendState {
 }
 
 final class CreateEmployeByIdSuccessState extends CreateHistoryAttendState {}
+
+abstract class FormSubmissionStatus {
+  const FormSubmissionStatus();
+}
+
+class InitialFormStatus extends FormSubmissionStatus {
+  const InitialFormStatus();
+}
+
+class ChangedFormStatus extends FormSubmissionStatus {}

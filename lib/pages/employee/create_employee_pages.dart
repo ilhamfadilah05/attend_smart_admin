@@ -48,8 +48,9 @@ class _CreateEmployeePagesState extends State<CreateEmployeePages> {
       context
           .read<BranchBloc>()
           .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
-      context.read<DepartmentBloc>().add(DepartmentLoadedEvent(
-          idCompany: accountData.idCompany!, lastData: const {}));
+      context
+          .read<DepartmentBloc>()
+          .add(DepartmentLoadedEvent(idCompany: accountData.idCompany!));
     }
   }
 

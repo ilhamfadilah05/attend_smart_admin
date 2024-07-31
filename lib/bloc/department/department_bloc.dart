@@ -1,4 +1,3 @@
-import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/department_model.dart';
@@ -6,29 +5,27 @@ import 'package:attend_smart_admin/repository/department/department_repository.d
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../history-attend/history_attend_bloc.dart';
+
+
 part 'department_event.dart';
 part 'department_state.dart';
 
 class DepartmentBloc extends Bloc<DepartmentEvent, DepartmentState> {
-  DepartmentRepository? departmentRepository;
-  DepartmentBloc(this.departmentRepository) : super(DepartmentInitialState()) {
+  final DepartmentRepository departmentRepo;
+  DepartmentBloc(this.departmentRepo) : super(DepartmentLoadingState()) {
     on<DepartmentLoadedEvent>((event, emit) async {
-      var result = await departmentRepository?.getDepartment(
-          event.idCompany, event.lastData);
-      var totalData =
-          await departmentRepository?.getTotalDataDepartment(event.idCompany);
-      if (result.runtimeType == List<DepartmentModel>) {
-        emit(DepartmentLoadedState(
-            listDepartments: result,
-            totalData: totalData ?? 0,
-            lastData: (result[result.length - 1]).toJson()));
+      final result = await departmentRepo.getDepartment(event.idCompany, {});
+
+      if (result.length == 0) {
+        emit(DepartmentEmptyState());
       } else {
-        emit(DepartmentErrorState(message: result));
+        emit(DepartmentLoadedState(listDepartment: result));
       }
     });
 
     on<DepartmentDeleteEvent>((event, emit) async {
-      final result = await departmentRepository?.deleteDepartment(id: event.id);
+      final result = await departmentRepo.deleteDepartment(id: event.id);
       if (result.runtimeType == String) {
         emit(DepartmentDeleteErrorState(message: result));
       } else {
@@ -38,7 +35,7 @@ class DepartmentBloc extends Bloc<DepartmentEvent, DepartmentState> {
   }
 }
 
-// Create Department
+//Create Department
 
 class CreateDepartmentBloc
     extends Bloc<CreateDepartmentEvent, CreateDepartmentState> {
@@ -47,7 +44,10 @@ class CreateDepartmentBloc
       : super(CreateDepartmentInitialState()) {
     on<CreateDepartmentEvent>((event, emit) async {
       if (event is CreateDepartmentChangedEvent) {
-        emit(state.copyWith(department: event.departmentData, isUpdate: false,formStatus: ChangedFormStatus()));
+        emit(state.copyWith(
+            department: event.departmentData,
+            isUpdate: false,
+            formStatus: ChangedFormStatus()));
       } else if (event is CreateDepartmentAddedEvent) {
         try {
           var randomString = getRandomString(10);

@@ -8,7 +8,7 @@ class HistoryAttendModel {
   String? nameEmployee;
   String? dateAttend;
   String? timeAttend;
-  String? statusAbsen;
+  String? delayedAttend;
   String? latLong;
   String? department;
   String? imageAttend;
@@ -25,7 +25,7 @@ class HistoryAttendModel {
     this.nameEmployee,
     this.dateAttend,
     this.timeAttend,
-    this.statusAbsen,
+    this.delayedAttend,
     this.latLong,
     this.department,
     this.imageAttend,
@@ -43,7 +43,7 @@ class HistoryAttendModel {
     String? nameEmployee,
     String? dateAttend,
     String? timeAttend,
-    String? statusAbsen,
+    String? delayedAttend,
     String? latLong,
     String? department,
     String? imageAttend,
@@ -60,7 +60,7 @@ class HistoryAttendModel {
       nameEmployee: nameEmployee ?? this.nameEmployee,
       dateAttend: dateAttend ?? this.dateAttend,
       timeAttend: timeAttend ?? this.timeAttend,
-      statusAbsen: statusAbsen ?? this.statusAbsen,
+      delayedAttend: delayedAttend ?? this.delayedAttend,
       latLong: latLong ?? this.latLong,
       department: department ?? this.department,
       imageAttend: imageAttend ?? this.imageAttend,
@@ -80,7 +80,7 @@ class HistoryAttendModel {
       nameEmployee: json['name_employee'],
       dateAttend: json['date_attend'],
       timeAttend: json['time_attend'],
-      statusAbsen: json['status_absen'],
+      delayedAttend: json['delayed_attend'],
       latLong: json['lat_long'],
       department: json['department'],
       imageAttend: json['image_attend'],
@@ -100,7 +100,7 @@ class HistoryAttendModel {
       'name_employee': nameEmployee,
       'date_attend': dateAttend,
       'time_attend': timeAttend,
-      'status_absen': statusAbsen,
+      'delayed_attend': delayedAttend,
       'lat_long': latLong,
       'department': department,
       'image_attend': imageAttend,

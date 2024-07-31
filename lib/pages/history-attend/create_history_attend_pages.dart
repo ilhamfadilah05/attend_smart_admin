@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, unused_field, prefer_collection_literals
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, unused_field, prefer_collection_literals, unused_element
 
 import 'dart:async';
 
@@ -8,6 +8,7 @@ import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
+import 'package:attend_smart_admin/components/global_form_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/history_attend_model.dart';
@@ -51,44 +52,48 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
 
   @override
   Widget build(BuildContext context) {
-    if (GoRouterState.of(context).matchedLocation.contains('/cabang/create')) {
-      context
-          .read<CreateHistoryAttendBloc>()
-          .add(CreateHistoryAttendResetEvent());
+    if (GoRouterState.of(context)
+        .matchedLocation
+        .contains('/history-attend/create')) {
+      // context
+      //     .read<CreateHistoryAttendBloc>()
+      //     .add(CreateHistoryAttendResetEvent());
     } else {
       context.read<CreateHistoryAttendBloc>().add(CreateHistoryAttendByIdEvent(
           id: GoRouterState.of(context).uri.queryParameters['id']!));
     }
 
     return BlocBuilder<ThemeCubit, bool>(
-      builder: (context, state) {
+      builder: (context, stateTheme) {
         return BlocListener<CreateHistoryAttendBloc, CreateHistoryAttendState>(
-          listener: (context, state) {
-            if (state is CreateHistoryAttendSuccessState) {
+          listener: (context, stateTheme) {
+            if (stateTheme is CreateHistoryAttendSuccessState) {
               alertNotification(
                   context: context,
                   type: 'success',
-                  message: state.isUpdateHistoryAttend
+                  message: stateTheme.isUpdateHistoryAttend
                       ? 'Berhasil merubah data cabang!'
                       : 'Berhasil menambahkan data cabang!',
                   title: 'Berhasil');
               context.go('/cabang/page');
-            } else if (state is CreateHistoryAttendErrorState) {
+            } else if (stateTheme is CreateHistoryAttendErrorState) {
               alertNotification(
-                  context: context, type: 'error', message: state.errorMessage);
+                  context: context,
+                  type: 'error',
+                  message: stateTheme.errorMessage);
             }
           },
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-                color: state ? blueDefaultDark : Colors.white,
+                color: stateTheme ? blueDefaultDark : Colors.white,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.grey.withOpacity(0.2))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextGlobal(
-                  message: 'Tambah Cabang',
+                  message: 'Edit Histori Absensi',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -96,8 +101,8 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
                   height: 10,
                 ),
                 BreadCrumbGlobal(
-                  firstHref: '/cabang/page',
-                  firstTitle: 'Cabang',
+                  firstHref: '/history-attend/page',
+                  firstTitle: 'Histori absensi',
                   typeBreadcrumb:
                       GoRouterState.of(context).uri.queryParameters['id'] ==
                               null
@@ -114,19 +119,158 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextGlobal(
-                          message: "Input Data Cabang ",
+                          message: "Edit Data Histori",
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                         TextGlobal(
-                            message: "Silahkan masukkan semua data cabang."),
+                            message: "Silahkan edit data histori disini"),
                       ],
                     ),
                     const SizedBox(
                       width: 20,
                     ),
                     Expanded(
-                      child: _inputDataCabang(),
+                      child: SizedBox(
+                        child: BlocBuilder<CreateHistoryAttendBloc,
+                            CreateHistoryAttendState>(
+                          builder: (context, state) {
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Nama Karyawan",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.nameEmployee),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Jabatan",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.department),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Nama Perusahaan",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.nameCompany),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Nama Cabang",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.nameBranch),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Tipe Absen",
+                                        controller: TextEditingController(
+                                            text:
+                                                state.historyAttend?.tipeAbsen),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Status Absen",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.delayedAttend),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Tanggal Absensi",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.dateAttend),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Waktu Absensi",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.timeAttend),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Lokasi Absensi",
+                                        controller: TextEditingController(
+                                            text: state
+                                                .historyAttend?.locationAttend),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: FormGlobal(
+                                        title: "Longitude & Latitude",
+                                        controller: TextEditingController(
+                                            text: state.historyAttend?.latLong),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 )
@@ -225,243 +369,6 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
                 const SizedBox(
                   height: 20,
                 ),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: FormGlobal(
-                //         title: "Nama Cabang",
-                //         controller: state.isUpdate == false
-                //             ? state.formStatus is InitialFormStatus
-                //                 ? TextEditingController(text: '')
-                //                 : null
-                //             : TextEditingController(text: state.historyAttend?.name),
-                //         onChanged: (p0) {
-                //           var empl = state.historyAttend;
-                //           if (empl == null) {
-                //             empl = HistoryAttendModel(name: p0);
-                //           } else {
-                //             empl = empl.copyWith(name: p0);
-                //           }
-
-                //           context.read<CreateHistoryAttendBloc>().add(
-                //               CreateHistoryAttendChangedEvent(
-                //                   historyAttendData: empl, isUpdate: false));
-                //         },
-                //         validator: (p0) {
-                //           if (state.historyAttend == null ||
-                //               state.historyAttend!.name == null) {
-                //             return 'Nama harus diisi!';
-                //           }
-
-                //           return null;
-                //         },
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 10,
-                //     ),
-                //     Expanded(
-                //       child: FormGlobal(
-                //         title: "Alamat Cabang",
-                //         controller: state.isUpdate == false
-                //             ? state.formStatus is InitialFormStatus
-                //                 ? TextEditingController(text: '')
-                //                 : null
-                //             : TextEditingController(
-                //                 text: state.historyAttend?.address),
-                //         onChanged: (p0) {
-                //           var empl = state.historyAttend;
-                //           if (empl == null) {
-                //             empl = HistoryAttendModel(address: p0);
-                //           } else {
-                //             empl = empl.copyWith(address: p0);
-                //           }
-
-                //           context.read<CreateHistoryAttendBloc>().add(
-                //               CreateHistoryAttendChangedEvent(
-                //                   historyAttendData: empl, isUpdate: false));
-                //         },
-                //         validator: (p0) {
-                //           if (state.historyAttend == null ||
-                //               state.historyAttend!.address == null) {
-                //             return 'Alamat harus diisi!';
-                //           }
-
-                //           return null;
-                //         },
-                //       ),
-                //     )
-                //   ],
-                // ),
-                // const SizedBox(
-                //   height: 10,
-                // ),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: InkWell(
-                //         onTap: () async {
-                //           final time = await showTimePicker(
-                //               context: context, initialTime: TimeOfDay.now());
-                //           var timeInAttendance = time!.format(context);
-
-                //           var empl = state.historyAttend;
-                //           if (empl == null) {
-                //             empl = HistoryAttendModel(
-                //                 timeInAttendance: timeInAttendance
-                //                     .replaceAll(' PM', '')
-                //                     .replaceAll(" AM", ''));
-                //           } else {
-                //             empl = empl.copyWith(
-                //                 timeInAttendance: timeInAttendance
-                //                     .replaceAll(' PM', '')
-                //                     .replaceAll(" AM", ''));
-                //           }
-
-                //           context.read<CreateHistoryAttendBloc>().add(
-                //               CreateHistoryAttendChangedEvent(
-                //                   historyAttendData: empl, isUpdate: false));
-                //         },
-                //         child: FormGlobal(
-                //           title: "Jam Masuk",
-                //           isDisabled: true,
-                //           controller: TextEditingController(
-                //               text: state.historyAttend?.timeInAttendance),
-                //           onChanged: (p0) {},
-                //           validator: (p0) {
-                //             if (state.historyAttend == null ||
-                //                 state.historyAttend!.timeInAttendance == null) {
-                //               return 'Jam Masuk harus diisi!';
-                //             }
-
-                //             return null;
-                //           },
-                //         ),
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 10,
-                //     ),
-                //     Expanded(
-                //       child: InkWell(
-                //         onTap: () async {
-                //           final time = await showTimePicker(
-                //               context: context, initialTime: TimeOfDay.now());
-                //           var timeOutAttendance = time!.format(context);
-                //           var empl = state.historyAttend;
-                //           if (empl == null) {
-                //             empl = HistoryAttendModel(
-                //                 timeOutAttendance: timeOutAttendance
-                //                     .replaceAll(' PM', '')
-                //                     .replaceAll(" AM", ''));
-                //           } else {
-                //             empl = empl.copyWith(
-                //                 timeOutAttendance: timeOutAttendance
-                //                     .replaceAll(' PM', '')
-                //                     .replaceAll(" AM", ''));
-                //           }
-
-                //           context.read<CreateHistoryAttendBloc>().add(
-                //               CreateHistoryAttendChangedEvent(
-                //                   historyAttendData: empl, isUpdate: false));
-                //         },
-                //         child: FormGlobal(
-                //           title: "Jam Keluar",
-                //           isDisabled: true,
-                //           controller: TextEditingController(
-                //               text: state.historyAttend?.timeOutAttendance),
-                //           onChanged: (p0) {},
-                //           validator: (p0) {
-                //             if (state.historyAttend == null ||
-                //                 state.historyAttend!.timeOutAttendance == null) {
-                //               return 'Jam Keluar harus diisi!';
-                //             }
-
-                //             return null;
-                //           },
-                //         ),
-                //       ),
-                //     )
-                //   ],
-                // ),
-                // const SizedBox(
-                //   height: 10,
-                // ),
-                // Row(
-                //   crossAxisAlignment: CrossAxisAlignment.center,
-                //   children: [
-                //     SizedBox(
-                //       width: 300,
-                //       child: FormGlobal(
-                //         title: "Radius Absensi",
-                //         keyboardType: TextInputType.number,
-                //         controller: state.isUpdate == false
-                //             ? state.formStatus is InitialFormStatus
-                //                 ? TextEditingController(text: '')
-                //                 : null
-                //             : TextEditingController(
-                //                 text: "${state.historyAttend?.radius}"),
-                //         onChanged: (p0) {
-                //           if (p0 == '') {
-                //             return;
-                //           }
-
-                //           var empl = state.historyAttend;
-                //           if (empl == null) {
-                //             empl = HistoryAttendModel(radius: int.parse(p0));
-                //           } else {
-                //             empl = empl.copyWith(radius: int.parse(p0));
-                //           }
-
-                //           context.read<CreateHistoryAttendBloc>().add(
-                //               CreateHistoryAttendChangedEvent(
-                //                   historyAttendData: empl, isUpdate: false));
-                //         },
-                //         validator: (p0) {
-                //           if (state.historyAttend == null ||
-                //               state.historyAttend!.radius == null) {
-                //             return 'Alamat harus diisi!';
-                //           }
-
-                //           return null;
-                //         },
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 10,
-                //     ),
-                //     Container(
-                //         padding: EdgeInsets.only(top: 16),
-                //         child: TextGlobal(message: 'Meter'))
-                //   ],
-                // ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                // BlocBuilder<AccountCubit, AccountState>(
-                //   builder: (context, stateAccount) {
-                //     return Row(
-                //       mainAxisAlignment: MainAxisAlignment.end,
-                //       children: [
-                //         ButtonGlobal(
-                //           message: "Simpan",
-                //           onPressed: () {
-                //             if (_formKey.currentState!.validate()) {
-                //               context.read<CreateHistoryAttendBloc>().add(
-                //                   CreateHistoryAttendAddedEvent(
-                //                       historyAttendData: HistoryAttendModel.fromJson(
-                //                         state.historyAttend?.toJson() ?? {},
-                //                       ),
-                //                       accountData: stateAccount is AccountLoaded
-                //                           ? stateAccount.account
-                //                           : AccountModel()));
-                //             }
-                //           },
-                //         ),
-                //       ],
-                //     );
-                //   },
-                // ),
               ],
             ));
       },

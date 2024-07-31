@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
 import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
+import 'package:attend_smart_admin/bloc/history-attend/history_attend_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
@@ -97,7 +98,7 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
   @override
   Widget build(BuildContext context) {
     if (GoRouterState.of(context).matchedLocation.contains('/cabang/create')) {
-      context.read<CreateBranchBloc>().add(CreateBranchResetEvent());
+      // context.read<CreateBranchBloc>().add(CreateBranchResetEvent());
     } else {
       context.read<CreateBranchBloc>().add(CreateBranchByIdEvent(
           id: GoRouterState.of(context).uri.queryParameters['id']!));
@@ -192,7 +193,7 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 300,
+                        height: 500,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(5),
                           child: GoogleMap(
@@ -206,15 +207,16 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                                     position: argument));
                                 latlngPositionMarker = argument;
                               });
+
                               var empl = state.branch;
                               if (empl == null) {
                                 empl = BranchModel(
                                     latLong:
-                                        "${latlngPositionMarker.latitude},${latlngPositionMarker.longitude}");
+                                        "${argument.latitude},${argument.longitude}");
                               } else {
                                 empl = empl.copyWith(
                                     latLong:
-                                        "${latlngPositionMarker.latitude},${latlngPositionMarker.longitude}");
+                                        "${argument.latitude},${argument.longitude}");
                               }
 
                               context.read<CreateBranchBloc>().add(
@@ -427,51 +429,100 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                   height: 10,
                 ),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 300,
-                      child: FormGlobal(
-                        title: "Radius Absensi",
-                        keyboardType: TextInputType.number,
-                        controller: state.isUpdate == false
-                            ? state.formStatus is InitialFormStatus
-                                ? TextEditingController(text: '')
-                                : null
-                            : TextEditingController(
-                                text: "${state.branch?.radius}"),
-                        onChanged: (p0) {
-                          if (p0 == '') {
-                            return;
-                          }
+                    Expanded(
+                      child: SizedBox(
+                        child: FormGlobal(
+                          title: "Toleransi Waktu Absen (Menit)",
+                          keyboardType: TextInputType.number,
+                          controller: state.isUpdate == false
+                              ? state.formStatus is InitialFormStatus
+                                  ? TextEditingController(text: '')
+                                  : null
+                              : TextEditingController(
+                                  text: "${state.branch?.toleranceAttend}"),
+                          onChanged: (p0) {
+                            if (p0 == '') {
+                              return;
+                            }
 
-                          var empl = state.branch;
-                          if (empl == null) {
-                            empl = BranchModel(radius: int.parse(p0));
-                          } else {
-                            empl = empl.copyWith(radius: int.parse(p0));
-                          }
+                            var empl = state.branch;
+                            if (empl == null) {
+                              empl =
+                                  BranchModel(toleranceAttend: int.parse(p0));
+                            } else {
+                              empl =
+                                  empl.copyWith(toleranceAttend: int.parse(p0));
+                            }
 
-                          context.read<CreateBranchBloc>().add(
-                              CreateBranchChangedEvent(
-                                  branchData: empl, isUpdate: false));
-                        },
-                        validator: (p0) {
-                          if (state.branch == null ||
-                              state.branch!.radius == null) {
-                            return 'Alamat harus diisi!';
-                          }
+                            context.read<CreateBranchBloc>().add(
+                                CreateBranchChangedEvent(
+                                    branchData: empl, isUpdate: false));
+                          },
+                          validator: (p0) {
+                            if (state.branch == null ||
+                                state.branch!.toleranceAttend == null) {
+                              return 'Toleransi Waktu harus diisi!';
+                            }
 
-                          return null;
-                        },
+                            return null;
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
-                    Container(
-                        padding: EdgeInsets.only(top: 16),
-                        child: TextGlobal(message: 'Meter'))
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 300,
+                            child: FormGlobal(
+                              title: "Radius Absensi",
+                              keyboardType: TextInputType.number,
+                              controller: state.isUpdate == false
+                                  ? state.formStatus is InitialFormStatus
+                                      ? TextEditingController(text: '')
+                                      : null
+                                  : TextEditingController(
+                                      text: "${state.branch?.radius}"),
+                              onChanged: (p0) {
+                                if (p0 == '') {
+                                  return;
+                                }
+
+                                var empl = state.branch;
+                                if (empl == null) {
+                                  empl = BranchModel(radius: int.parse(p0));
+                                } else {
+                                  empl = empl.copyWith(radius: int.parse(p0));
+                                }
+
+                                context.read<CreateBranchBloc>().add(
+                                    CreateBranchChangedEvent(
+                                        branchData: empl, isUpdate: false));
+                              },
+                              validator: (p0) {
+                                if (state.branch == null ||
+                                    state.branch!.radius == null) {
+                                  return 'Radius harus diisi!';
+                                }
+
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                              padding: EdgeInsets.only(top: 16),
+                              child: TextGlobal(message: 'Meter'))
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(

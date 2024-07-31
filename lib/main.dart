@@ -6,12 +6,14 @@ import 'package:attend_smart_admin/bloc/history-attend/history_attend_bloc.dart'
 import 'package:attend_smart_admin/bloc/login/login_bloc.dart';
 import 'package:attend_smart_admin/bloc/login/obscure_cubit.dart';
 import 'package:attend_smart_admin/bloc/session/session_cubit.dart';
+import 'package:attend_smart_admin/bloc/submission/submission_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/repository/branch/branch_repository.dart';
 import 'package:attend_smart_admin/repository/department/department_repository.dart';
 import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:attend_smart_admin/repository/history-attend/history_attend_repository.dart';
 import 'package:attend_smart_admin/repository/login/login_repository.dart';
+import 'package:attend_smart_admin/repository/submission/submission_repository.dart';
 import 'package:attend_smart_admin/routes/router.dart';
 import 'package:attend_smart_admin/themes/global_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -65,6 +67,11 @@ class MyApp extends StatelessWidget {
           BlocProvider(
               create: (context) =>
                   CreateHistoryAttendBloc(HistoryAttendRepository())),
+          BlocProvider(
+              create: (context) => SubmissionBloc(SubmissionRepository())),
+          BlocProvider(
+              create: (context) =>
+                  CreateSubmissionBloc(SubmissionRepository())),
         ],
         child: BlocBuilder<ThemeCubit, bool>(
           builder: (context, state) {

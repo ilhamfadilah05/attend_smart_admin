@@ -1,4 +1,3 @@
-import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/employee_model.dart';
@@ -6,6 +5,8 @@ import 'package:attend_smart_admin/pages/account/account_repository.dart';
 import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+
+import '../history-attend/history_attend_bloc.dart';
 part 'employee_event.dart';
 part 'employee_state.dart';
 

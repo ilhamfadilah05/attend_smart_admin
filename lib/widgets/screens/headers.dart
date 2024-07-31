@@ -1,5 +1,6 @@
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
+import 'package:attend_smart_admin/widgets/navbar/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -31,6 +32,7 @@ class HeadersScreen extends StatelessWidget {
                               return ClipRRect(
                                 borderRadius: BorderRadius.circular(5),
                                 child: AlertDialog(
+                                  scrollable: true,
                                   content: Column(
                                     children: [
                                       SizedBox(
@@ -40,6 +42,7 @@ class HeadersScreen extends StatelessWidget {
                                           color: state ? Colors.white : null,
                                         ),
                                       ),
+                                      NavbarWidget()
                                     ],
                                   ),
                                 ),

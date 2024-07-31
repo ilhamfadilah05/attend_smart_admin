@@ -1,36 +1,3 @@
-// part of 'branch_bloc.dart';
-
-// sealed class BranchState extends Equatable {
-//   const BranchState();
-
-//   @override
-//   List<Object> get props => [];
-// }
-
-// final class BranchInitialState extends BranchState {}
-
-// final class BranchLoadingState extends BranchState {}
-
-// final class BranchLoadedtate extends BranchState {
-//   final List<BranchModel> listBranch;
-
-//   const BranchLoadedtate({required this.listBranch});
-
-//   @override
-//   List<Object> get props => [listBranch];
-// }
-
-// final class BranchErrorState extends BranchState {
-//   final String message;
-
-//   const BranchErrorState({required this.message});
-
-//   @override
-//   List<Object> get props => [message];
-// }
-
-// ignore_for_file: must_be_immutable
-
 part of 'branch_bloc.dart';
 
 sealed class BranchState extends Equatable {
@@ -40,29 +7,27 @@ sealed class BranchState extends Equatable {
   List<Object> get props => [];
 }
 
-final class BranchInitialState extends BranchState {}
-
 final class BranchLoadingState extends BranchState {}
 
 final class BranchLoadedState extends BranchState {
   final List<BranchModel> listBranch;
-  const BranchLoadedState({
-    required this.listBranch,
-  });
+
+  const BranchLoadedState({required this.listBranch});
 
   @override
   List<Object> get props => [listBranch];
 }
 
+final class BranchEmptyState extends BranchState {}
+
 final class BranchErrorState extends BranchState {
   final String message;
+
   const BranchErrorState({required this.message});
 
   @override
   List<Object> get props => [message];
 }
-
-final class BranchEmptyState extends BranchState {}
 
 final class BranchDeleteSuccessState extends BranchState {}
 
@@ -75,12 +40,11 @@ final class BranchDeleteErrorState extends BranchState {
   List<Object> get props => [message];
 }
 
-// Create Branch
+// Create Branch State
 
 class CreateBranchState extends Equatable {
   final BranchModel? branch;
   final FormSubmissionStatus formStatus;
-
   final String errorMessage;
   final bool isUpdate;
 
@@ -90,11 +54,12 @@ class CreateBranchState extends Equatable {
       this.isUpdate = false,
       this.formStatus = const InitialFormStatus()});
 
-  CreateBranchState copyWith(
-      {BranchModel? branch,
-      String? errorMessage,
-      bool? isUpdate,
-      FormSubmissionStatus? formStatus}) {
+  CreateBranchState copyWith({
+    BranchModel? branch,
+    String? errorMessage,
+    bool? isUpdate,
+    FormSubmissionStatus? formStatus,
+  }) {
     return CreateBranchState(
       branch: branch ?? branch,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -106,16 +71,6 @@ class CreateBranchState extends Equatable {
   @override
   List<Object?> get props => [branch, errorMessage, isUpdate, formStatus];
 }
-
-abstract class FormSubmissionStatus {
-  const FormSubmissionStatus();
-}
-
-class InitialFormStatus extends FormSubmissionStatus {
-  const InitialFormStatus();
-}
-
-class ChangedFormStatus extends FormSubmissionStatus {}
 
 final class CreateBranchErrorState extends CreateBranchState {
   final String message;

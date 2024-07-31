@@ -7,17 +7,16 @@ sealed class DepartmentEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class DepartmentLoadingEvent extends DepartmentEvent {}
+
 class DepartmentLoadedEvent extends DepartmentEvent {
   final String idCompany;
-  final Map<String, dynamic> lastData;
 
-  const DepartmentLoadedEvent(
-      {required this.idCompany, required this.lastData});
+  const DepartmentLoadedEvent({required this.idCompany});
 
   @override
-  List<Object> get props => [idCompany, lastData];
+  List<Object> get props => [idCompany];
 }
-
 
 class DepartmentDeleteEvent extends DepartmentEvent {
   final String id;
@@ -28,7 +27,8 @@ class DepartmentDeleteEvent extends DepartmentEvent {
   List<Object> get props => [id];
 }
 
-// Create Department
+// Create Department Event
+
 sealed class CreateDepartmentEvent extends Equatable {
   const CreateDepartmentEvent();
 
