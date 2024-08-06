@@ -39,6 +39,7 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
   @override
   void initState() {
     getAccountData(context);
+
     super.initState();
   }
 
@@ -49,61 +50,20 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
     if (accountData.idCompany == null) {
       context.pushReplacement('/login');
     }
-  }
 
-  // addMarker(LatLng latlng, CreateBranchState state) {
-  //   if (marker.length == 1) {
-  //     setState(() {
-  //       marker.clear();
-  //       marker.add(Marker(markerId: MarkerId("1"), position: latlng));
-  //       latlngPositionMarker = latlng;
-  //     });
-  //     var empl = state.branch;
-  //     if (empl == null) {
-  //       empl = BranchModel(
-  //           name:
-  //               "${latlngPositionMarker.latitude}, ${latlngPositionMarker.longitude}");
-  //     } else {
-  //       empl = empl.copyWith(
-  //           name:
-  //               "${latlngPositionMarker.latitude}, ${latlngPositionMarker.longitude}");
-  //     }
-
-  //     context
-  //         .read<CreateBranchBloc>()
-  //         .add(CreateBranchChangedEvent(branchData: empl, isUpdate: false));
-  //   } else {
-  //     setState(() {
-  //       marker.add(Marker(markerId: MarkerId("1"), position: latlng));
-  //       latlngPositionMarker = latlng;
-  //     });
-
-  //     var empl = state.branch;
-  //     if (empl == null) {
-  //       empl = BranchModel(
-  //           name:
-  //               "${latlngPositionMarker.latitude}, ${latlngPositionMarker.longitude}");
-  //     } else {
-  //       empl = empl.copyWith(
-  //           name:
-  //               "${latlngPositionMarker.latitude}, ${latlngPositionMarker.longitude}");
-  //     }
-
-  //     context
-  //         .read<CreateBranchBloc>()
-  //         .add(CreateBranchChangedEvent(branchData: empl, isUpdate: false));
-  //   }
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    if (GoRouterState.of(context).matchedLocation.contains('/cabang/create')) {
-      // context.read<CreateBranchBloc>().add(CreateBranchResetEvent());
+    if (GoRouterState.of(context).uri.queryParameters['id'] == null) {
+      context.read<CreateBranchBloc>().add(CreateBranchInitialEvent());
     } else {
       context.read<CreateBranchBloc>().add(CreateBranchByIdEvent(
           id: GoRouterState.of(context).uri.queryParameters['id']!));
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    if (GoRouterState.of(context).uri.path == '/cabang/create') {
+      context.read<CreateBranchBloc>().add(CreateBranchInitialEvent());
+    }
     return BlocBuilder<ThemeCubit, bool>(
       builder: (context, state) {
         return BlocListener<CreateBranchBloc, CreateBranchState>(

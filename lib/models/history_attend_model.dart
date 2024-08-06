@@ -14,6 +14,8 @@ class HistoryAttendModel {
   String? imageAttend;
   String? locationAttend;
   String? tipeAbsen;
+  String? createdAt;
+
 
   HistoryAttendModel({
     this.id,
@@ -31,6 +33,7 @@ class HistoryAttendModel {
     this.imageAttend,
     this.locationAttend,
     this.tipeAbsen,
+    this.createdAt
   });
 
   HistoryAttendModel copyWith({
@@ -49,6 +52,8 @@ class HistoryAttendModel {
     String? imageAttend,
     String? locationAttend,
     String? tipeAbsen,
+  String? createdAt
+    
   }) {
     return HistoryAttendModel(
       id: id ?? this.id,
@@ -66,6 +71,7 @@ class HistoryAttendModel {
       imageAttend: imageAttend ?? this.imageAttend,
       locationAttend: locationAttend ?? this.locationAttend,
       tipeAbsen: tipeAbsen ?? this.tipeAbsen,
+      createdAt: createdAt ?? this.createdAt
     );
   }
 
@@ -86,6 +92,7 @@ class HistoryAttendModel {
       imageAttend: json['image_attend'],
       locationAttend: json['location_attend'],
       tipeAbsen: json['tipe_absen'],
+      createdAt: json['created_at'],
     );
   }
 
@@ -106,6 +113,7 @@ class HistoryAttendModel {
       'image_attend': imageAttend,
       'location_attend': locationAttend,
       'tipe_absen': tipeAbsen,
+      'created_at': createdAt
     };
   }
 }

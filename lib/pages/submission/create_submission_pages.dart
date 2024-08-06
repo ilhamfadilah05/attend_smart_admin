@@ -59,10 +59,10 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
                   context: context,
                   type: 'success',
                   message: state.isUpdateSubmission
-                      ? 'Berhasil merubah data jabatan!'
-                      : 'Berhasil menambahkan data jabatan!',
+                      ? 'Berhasil merubah data pengajuan!'
+                      : 'Berhasil menambahkan data pengajuan!',
                   title: 'Berhasil');
-              context.go('/jabatan/page');
+              context.go('/pengajuan/page');
             } else if (state is CreateSubmissionErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);
@@ -284,35 +284,42 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
                             const SizedBox(
                               height: 20,
                             ),
-                            BlocBuilder<AccountCubit, AccountState>(
-                              builder: (context, stateAccount) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    ButtonGlobal(
-                                      message: "Approval Pengajuan",
-                                      onPressed: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          context
-                                              .read<CreateSubmissionBloc>()
-                                              .add(CreateSubmissionAddedEvent(
-                                                  submissionData:
-                                                      SubmissionModel.fromJson(
-                                                    state.submission
-                                                            ?.toJson() ??
-                                                        {},
-                                                  ),
-                                                  accountData: stateAccount
-                                                          is AccountLoaded
-                                                      ? stateAccount.account
-                                                      : AccountModel()));
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
+                            state.submission?.status == 'approved'
+                                ? Container()
+                                : BlocBuilder<AccountCubit, AccountState>(
+                                    builder: (context, stateAccount) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ButtonGlobal(
+                                            message: "Approval Pengajuan",
+                                            onPressed: () {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                var dataSubmission =
+                                                    state.submission;
+                                                dataSubmission?.status =
+                                                    'approved';
+                                                context
+                                                    .read<
+                                                        CreateSubmissionBloc>()
+                                                    .add(CreateSubmissionAddedEvent(
+                                                        submissionData:
+                                                            dataSubmission ??
+                                                                SubmissionModel(),
+                                                        accountData: stateAccount
+                                                                is AccountLoaded
+                                                            ? stateAccount
+                                                                .account
+                                                            : AccountModel()));
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                           ],
                         ));
                   },

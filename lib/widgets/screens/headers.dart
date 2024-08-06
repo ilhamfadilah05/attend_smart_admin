@@ -42,7 +42,7 @@ class HeadersScreen extends StatelessWidget {
                                           color: state ? Colors.white : null,
                                         ),
                                       ),
-                                      NavbarWidget()
+                                      const NavbarWidget()
                                     ],
                                   ),
                                 ),

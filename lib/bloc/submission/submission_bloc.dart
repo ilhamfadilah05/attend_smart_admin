@@ -1,9 +1,14 @@
 import 'package:attend_smart_admin/components/global_random_string_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
+import 'package:attend_smart_admin/models/employee_model.dart';
+import 'package:attend_smart_admin/models/history_attend_model.dart';
 import 'package:attend_smart_admin/models/submission_model.dart';
+import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
+import 'package:attend_smart_admin/repository/history-attend/history_attend_repository.dart';
 import 'package:attend_smart_admin/repository/submission/submission_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 import '../history-attend/history_attend_bloc.dart';
 
@@ -64,6 +69,42 @@ class CreateSubmissionBloc
 
           var result =
               await submissionRepo.addSubmission(submission: state.submission!);
+
+          var dataEmployee = EmployeeModel.fromJson(await EmployeeRepository()
+              .getEmployeeById(id: state.submission!.idEmployee!));
+
+          var dateStart = DateTime.parse(state.submission!.dateStart!);
+          var dateEnd = DateTime.parse(state.submission!.dateEnd!);
+
+          var totalDaySubmission = dateEnd.difference(dateStart).inDays;
+
+          for (var i = 0; i <= totalDaySubmission; i++) {
+            var dataAttend = HistoryAttendModel(
+              id: 'history_${dataEmployee.id}_${getRandomString(6)}',
+              idEmployee: dataEmployee.id,
+              idBranch: state.submission?.idBranch,
+              idCompany: state.submission?.idCompany,
+              nameEmployee: state.submission?.nameEmployee,
+              nameBranch: dataEmployee.nameBranch,
+              nameCompany: dataEmployee.nameCompany,
+              tipeAbsen: state.submission?.type?.toUpperCase(),
+              delayedAttend: '0',
+              latLong: '0,0',
+              locationAttend: state.submission?.type?.toUpperCase(),
+              imageAttend: null,
+              dateAttend: DateFormat('yyyy-MM-dd')
+                  .format(dateStart.add(Duration(days: i)))
+                  .toString(),
+              timeAttend: DateFormat('HH:mm')
+                  .format(dateStart.add(Duration(days: i)))
+                  .toString(),
+              department: dataEmployee.department,
+              createdAt: DateTime.now().toString(),
+            );
+
+            await HistoryAttendRepository()
+                .addHistoryAttend(historyAttend: dataAttend);
+          }
 
           if (result.runtimeType == String) {
             emit(CreateSubmissionErrorState(message: state.errorMessage));
