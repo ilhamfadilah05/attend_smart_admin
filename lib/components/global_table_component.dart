@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:number_pagination/number_pagination.dart';
 
 class TableGlobal extends StatelessWidget {
   const TableGlobal(
@@ -34,28 +35,24 @@ class TableGlobal extends StatelessWidget {
             children: [TableRow(children: headers), ...data],
           ),
         ),
-        // const SizedBox(
-        //   height: 20,
-        // ),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: NumberPagination(
-        //         onPageChanged: pageChanged,
-        //         threshold: 2,
-        //         pageTotal: (pageTotal / 5).ceil(),
-        //         pageInit: page,
-        //         colorPrimary: Colors.black,
-        //         colorSub: Colors.white,
-        //         buttonRadius: 5,
-        //         buttonElevation: 2,
-        //         fontSize: 12,
-        //         fontFamily: 'quicksand',
-        //         groupSpacing: 5,
-        //       ),
-        //     ),
-        //   ],
-        // ),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: NumberPagination(
+                onPageChanged: pageChanged,
+                totalPages: (pageTotal / 5).ceil(),
+                currentPage: page,
+                buttonRadius: 5,
+                buttonElevation: 2,
+                fontSize: 12,
+                fontFamily: 'quicksand',
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

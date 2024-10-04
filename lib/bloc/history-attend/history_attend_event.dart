@@ -11,11 +11,14 @@ class HistoryAttendLoadingEvent extends HistoryAttendEvent {}
 
 class HistoryAttendLoadedEvent extends HistoryAttendEvent {
   final String idCompany;
+  final int page;
+  final int limit;
 
-  const HistoryAttendLoadedEvent({required this.idCompany});
+  const HistoryAttendLoadedEvent(
+      {required this.idCompany, required this.page, required this.limit});
 
   @override
-  List<Object> get props => [idCompany];
+  List<Object> get props => [idCompany, page, limit];
 }
 
 class HistoryAttendDeleteEvent extends HistoryAttendEvent {

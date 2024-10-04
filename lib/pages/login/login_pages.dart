@@ -29,7 +29,9 @@ class _LoginPagesState extends State<LoginPages> {
             : BlocListener<SessionCubit, SessionState>(
                 listener: (context, state) {
                   if (state is UserAuthenticated) {
-                    context.go('/dashboard');
+                    Router.neglect(context, () {
+                      context.go('/dashboard/page');
+                    });
                   }
                 },
                 child: SizedBox(

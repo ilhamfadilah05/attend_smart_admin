@@ -3,6 +3,7 @@ import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 dialogQuestion(BuildContext context,
     {required Function() onTapYes,
@@ -36,7 +37,12 @@ dialogQuestion(BuildContext context,
                           color: state ? blueDefaultDark : Colors.white,
                           child: Column(
                             children: [
-                              icon ?? Container(),
+                              icon ??
+                                  const Icon(
+                                    Iconsax.message_question_bold,
+                                    color: Colors.amber,
+                                    size: 100,
+                                  ),
                               const SizedBox(
                                 height: 20,
                               ),

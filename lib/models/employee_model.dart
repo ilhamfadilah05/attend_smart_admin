@@ -4,6 +4,7 @@ class EmployeeModel {
   String? name;
   String? nameCompany;
   String? idBranch;
+  String? idAccount;
   String? nameBranch;
   String? gender;
   String? nohp;
@@ -14,6 +15,7 @@ class EmployeeModel {
   String? department;
   String? workingStatus;
   String? image;
+  String? tokenNotif;
 
   EmployeeModel({
     this.id,
@@ -21,6 +23,7 @@ class EmployeeModel {
     this.name,
     this.nameCompany,
     this.idBranch,
+    this.idAccount,
     this.nameBranch,
     this.gender,
     this.nohp,
@@ -31,48 +34,52 @@ class EmployeeModel {
     this.department,
     this.workingStatus,
     this.image,
+    this.tokenNotif,
   });
 
-  EmployeeModel copyWith({
-    String? id,
-    String? idCompany,
-    String? name,
-    String? nameCompany,
-    String? idBranch,
-    String? nameBranch,
-    String? gender,
-    String? nohp,
-    String? nik,
-    String? address,
-    String? remainingCuti,
-    String? totalCuti,
-    String? department,
-    String? workingStatus,
-    String? image,
-  }) {
+  EmployeeModel copyWith(
+      {String? id,
+      String? idCompany,
+      String? idAccount,
+      String? name,
+      String? nameCompany,
+      String? idBranch,
+      String? nameBranch,
+      String? gender,
+      String? nohp,
+      String? nik,
+      String? address,
+      String? remainingCuti,
+      String? totalCuti,
+      String? department,
+      String? workingStatus,
+      String? image,
+      String? tokenNotif}) {
     return EmployeeModel(
-      id: id ?? this.id,
-      idCompany: idCompany ?? this.idCompany,
-      name: name ?? this.name,
-      nameCompany: nameCompany ?? this.nameCompany,
-      idBranch: idBranch ?? this.idBranch,
-      nameBranch: nameBranch ?? this.nameBranch,
-      gender: gender ?? this.gender,
-      nohp: nohp ?? this.nohp,
-      nik: nik ?? this.nik,
-      address: address ?? this.address,
-      remainingCuti: remainingCuti ?? this.remainingCuti,
-      totalCuti: totalCuti ?? this.totalCuti,
-      department: department ?? this.department,
-      workingStatus: workingStatus ?? this.workingStatus,
-      image: image ?? this.image,
-    );
+        id: id ?? this.id,
+        idCompany: idCompany ?? this.idCompany,
+        name: name ?? this.name,
+        idAccount: idAccount ?? this.idAccount,
+        nameCompany: nameCompany ?? this.nameCompany,
+        idBranch: idBranch ?? this.idBranch,
+        nameBranch: nameBranch ?? this.nameBranch,
+        gender: gender ?? this.gender,
+        nohp: nohp ?? this.nohp,
+        nik: nik ?? this.nik,
+        address: address ?? this.address,
+        remainingCuti: remainingCuti ?? this.remainingCuti,
+        totalCuti: totalCuti ?? this.totalCuti,
+        department: department ?? this.department,
+        workingStatus: workingStatus ?? this.workingStatus,
+        image: image ?? this.image,
+        tokenNotif: tokenNotif ?? this.tokenNotif);
   }
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
     return EmployeeModel(
       id: json['id'],
       idCompany: json['id_company'],
+      idAccount: json['id_account'],
       name: json['name'],
       nameCompany: json['name_company'],
       idBranch: json['id_branch'],
@@ -86,6 +93,7 @@ class EmployeeModel {
       department: json['department'],
       workingStatus: json['working_status'],
       image: json['image'],
+      tokenNotif: json['token_notif'],
     );
   }
 
@@ -93,6 +101,7 @@ class EmployeeModel {
     return {
       'id': id,
       'id_company': idCompany,
+      'id_account': idAccount,
       'name': name,
       'id_branch': idBranch,
       'name_branch': nameBranch,
@@ -106,6 +115,7 @@ class EmployeeModel {
       'department': department,
       'working_status': workingStatus,
       'image': image,
+      'token_notif': tokenNotif
     };
   }
 }

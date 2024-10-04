@@ -11,11 +11,14 @@ class SubmissionLoadingEvent extends SubmissionEvent {}
 
 class SubmissionLoadedEvent extends SubmissionEvent {
   final String idCompany;
+  final int page;
+  final int limit;
 
-  const SubmissionLoadedEvent({required this.idCompany});
+  const SubmissionLoadedEvent(
+      {required this.idCompany, required this.page, required this.limit});
 
   @override
-  List<Object> get props => [idCompany];
+  List<Object> get props => [idCompany, page, limit];
 }
 
 class SubmissionDeleteEvent extends SubmissionEvent {

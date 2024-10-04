@@ -10,26 +10,24 @@ sealed class EmployeeEvent extends Equatable {
 class EmployeeLoadingEvent extends EmployeeEvent {}
 
 class EmployeeLoadedEvent extends EmployeeEvent {
-  final int startData;
-  final int lastData;
   final String idCompany;
+  final int page;
+  final int limit;
 
   const EmployeeLoadedEvent(
-      {required this.startData,
-      required this.lastData,
-      required this.idCompany});
+      {required this.idCompany, required this.page, required this.limit});
 
   @override
-  List<Object> get props => [startData, lastData, idCompany];
+  List<Object> get props => [idCompany, page, limit];
 }
 
 class EmployeeDeleteEvent extends EmployeeEvent {
-  final String id;
+  final EmployeeModel dataEmployee;
 
-  const EmployeeDeleteEvent({required this.id});
+  const EmployeeDeleteEvent({required this.dataEmployee});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [dataEmployee];
 }
 
 // Create Employee Event

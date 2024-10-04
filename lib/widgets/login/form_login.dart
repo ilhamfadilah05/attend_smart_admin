@@ -34,7 +34,10 @@ class FormLogin extends StatelessWidget {
           Navigator.of(context).pop();
           sharedPrefs.setString('token', state.account!.id!);
           sharedPrefs.setString('dataUser', jsonEncode(state.account));
-          context.go('/dashboard/page');
+
+          Router.neglect(context, () {
+            context.pushReplacement('/dashboard/page');
+          });
         } else if (state.formStatus is SubmissionFailed) {
           Navigator.of(context).pop();
           alertNotification(

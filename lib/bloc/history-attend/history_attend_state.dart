@@ -10,12 +10,22 @@ sealed class HistoryAttendState extends Equatable {
 final class HistoryAttendLoadingState extends HistoryAttendState {}
 
 final class HistoryAttendLoadedState extends HistoryAttendState {
-  final List<HistoryAttendModel> listHistoryAttend;
+  final List listHistoryAttend;
+  final List listInitialHistoryAttend;
+  final int page;
+  final int limit;
+  final int lengthData;
 
-  const HistoryAttendLoadedState({required this.listHistoryAttend});
+  const HistoryAttendLoadedState(
+      {required this.listHistoryAttend,
+      required this.listInitialHistoryAttend,
+      required this.page,
+      required this.limit,
+      required this.lengthData});
 
   @override
-  List<Object> get props => [listHistoryAttend];
+  List<Object> get props =>
+      [listHistoryAttend, page, limit, lengthData, listInitialHistoryAttend];
 }
 
 final class HistoryAttendEmptyState extends HistoryAttendState {}
@@ -69,7 +79,8 @@ class CreateHistoryAttendState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [historyAttend, errorMessage, isUpdate, formStatus];
+  List<Object?> get props =>
+      [historyAttend, errorMessage, isUpdate, formStatus];
 }
 
 final class CreateHistoryAttendErrorState extends CreateHistoryAttendState {
@@ -105,3 +116,7 @@ class InitialFormStatus extends FormSubmissionStatus {
 }
 
 class ChangedFormStatus extends FormSubmissionStatus {}
+
+class LoadingFormStatus extends FormSubmissionStatus {}
+
+class LoadingButtonStatus extends FormSubmissionStatus {}

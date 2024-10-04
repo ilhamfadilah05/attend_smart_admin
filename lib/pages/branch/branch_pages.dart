@@ -7,9 +7,11 @@ import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
-import 'package:attend_smart_admin/components/global_table_component.dart';
+import 'package:attend_smart_admin/components/global_data_table_component.dart';
+import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
+import 'package:attend_smart_admin/models/data_table_model.dart';
 import 'package:attend_smart_admin/repository/Branch/Branch_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,11 +39,12 @@ class _BranchPagesState extends State<BranchPages> {
     accountData = await context.read<AccountCubit>().init() ?? AccountModel();
 
     if (accountData.idCompany == null) {
-      context.pushReplacement('/login');
+      Router.neglect(context, () {
+        context.pushReplacement('/login');
+      });
     } else {
-      context
-          .read<BranchBloc>()
-          .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
+      context.read<BranchBloc>().add(BranchLoadedEvent(
+          idCompany: accountData.idCompany!, page: 1, limit: 5));
     }
   }
 
@@ -57,9 +60,8 @@ class _BranchPagesState extends State<BranchPages> {
                   type: 'success',
                   message: 'Berhasil menghapus data cabang.',
                   title: 'Berhasil!');
-              context
-                  .read<BranchBloc>()
-                  .add(BranchLoadedEvent(idCompany: accountData.idCompany!));
+              context.read<BranchBloc>().add(BranchLoadedEvent(
+                  idCompany: accountData.idCompany!, page: 1, limit: 5));
             }
           },
           child: Container(
@@ -80,7 +82,7 @@ class _BranchPagesState extends State<BranchPages> {
                   height: 10,
                 ),
                 const BreadCrumbGlobal(
-                  firstHref: '/cabang/page',
+                  firstHref: '/branch/page',
                   firstTitle: 'Cabang',
                   typeBreadcrumb: 'List',
                 ),
@@ -94,7 +96,9 @@ class _BranchPagesState extends State<BranchPages> {
                           ButtonGlobal(
                             message: 'Tambah Cabang',
                             onPressed: () {
-                              context.namedLocation('/cabang/create');
+                              Router.neglect(context, () {
+                                context.go('/branch/create');
+                              });
                             },
                             colorBtn: blueDefaultLight,
                           ),
@@ -113,7 +117,9 @@ class _BranchPagesState extends State<BranchPages> {
                           ButtonGlobal(
                             message: 'Tambah Cabang',
                             onPressed: () {
-                              context.go('/cabang/create');
+                              Router.neglect(context, () {
+                                context.go('/branch/create');
+                              });
                             },
                             colorBtn: blueDefaultLight,
                           ),
@@ -154,37 +160,50 @@ class _BranchPagesState extends State<BranchPages> {
                         ),
                       );
                     } else if (state is BranchLoadedState) {
-                      return FutureBuilder(
-                        future: listDataTableBranch(state.listBranch, context),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Container();
-                          } else if (snapshot.hasData) {
-                            var listDataBranch = snapshot.data;
-                            return TableGlobal(
-                                data: listDataBranch!,
-                                headers: listHeaderTableBranch,
-                                page: page,
-                                pageChanged: (p0) {
-                                  setState(() {
-                                    page = p0;
-                                  });
-                                  context.read<BranchBloc>().add(
-                                      BranchLoadedEvent(
-                                          idCompany: accountData.idCompany!));
-                                },
-                                pageTotal: 0,
-                                widthTable:
-                                    MediaQuery.of(context).size.width <= 800
-                                        ? 200
-                                        : 400);
-                          }
-
-                          return Center(child: TextGlobal(message: 'message'));
+                      return DataTableWidget(
+                        listData: state.listBranch.map((e) => e).toList(),
+                        listHeaderTable: BranchRepository.listHeaderTable,
+                        dataTableOthers: DataTableOthersModel(
+                          page: state.page,
+                          pageSize: state.lengthData,
+                          limit: state.limit,
+                          totalData: state.lengthData,
+                        ),
+                        isEdit: true,
+                        isDelete: false,
+                        onTapEdit: (id) {
+                          Router.neglect(context, () {
+                            context.go('/branch/edit?id=$id');
+                          });
                         },
+                        onTapDelete: (id) {
+                          dialogQuestion(context, onTapYes: () {
+                            context
+                                .read<BranchBloc>()
+                                .add(BranchDeleteEvent(id: id));
+                            Navigator.pop(context);
+                          },
+                              icon: const Icon(
+                                Iconsax.trash_bold,
+                                color: Colors.red,
+                                size: 100,
+                              ),
+                              message:
+                                  'Apakah anda yakin ingin menghapus data ini?');
+                        },
+                        onTapPage: (page) {
+                          context.read<BranchBloc>().add(BranchLoadedEvent(
+                              idCompany: accountData.idCompany!,
+                              page: page,
+                              limit: state.limit));
+                        },
+                        onTapLimit: (limit) {
+                          context.read<BranchBloc>().add(BranchLoadedEvent(
+                              idCompany: accountData.idCompany!,
+                              page: state.page,
+                              limit: int.parse(limit)));
+                        },
+                        onTapSort: (indexHeader, key) {},
                       );
                     }
 

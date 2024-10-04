@@ -11,11 +11,14 @@ class BranchLoadingEvent extends BranchEvent {}
 
 class BranchLoadedEvent extends BranchEvent {
   final String idCompany;
+  final int page;
+  final int limit;
 
-  const BranchLoadedEvent({required this.idCompany});
+  const BranchLoadedEvent(
+      {required this.idCompany, required this.page, required this.limit});
 
   @override
-  List<Object> get props => [idCompany];
+  List<Object> get props => [idCompany, page, limit];
 }
 
 class BranchDeleteEvent extends BranchEvent {

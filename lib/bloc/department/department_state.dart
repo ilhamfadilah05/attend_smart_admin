@@ -1,6 +1,5 @@
 part of 'department_bloc.dart';
 
-
 sealed class DepartmentState extends Equatable {
   const DepartmentState();
 
@@ -11,12 +10,22 @@ sealed class DepartmentState extends Equatable {
 final class DepartmentLoadingState extends DepartmentState {}
 
 final class DepartmentLoadedState extends DepartmentState {
-  final List<DepartmentModel> listDepartment;
+  final List listDepartment;
+  final List listInitialDepartment;
+  final int page;
+  final int limit;
+  final int lengthData;
 
-  const DepartmentLoadedState({required this.listDepartment});
+  const DepartmentLoadedState(
+      {required this.listDepartment,
+      required this.listInitialDepartment,
+      required this.page,
+      required this.limit,
+      required this.lengthData});
 
   @override
-  List<Object> get props => [listDepartment];
+  List<Object> get props =>
+      [listDepartment, page, limit, lengthData, listInitialDepartment];
 }
 
 final class DepartmentEmptyState extends DepartmentState {}

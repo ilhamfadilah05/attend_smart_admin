@@ -11,6 +11,7 @@ import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_form_component.dart';
+import 'package:attend_smart_admin/components/global_responsive_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/branch_model.dart';
@@ -48,7 +49,9 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
         await context.read<AccountCubit>().init() ?? AccountModel();
 
     if (accountData.idCompany == null) {
-      context.pushReplacement('/login');
+      Router.neglect(context, () {
+        context.pushReplacement('/login');
+      });
     }
 
     if (GoRouterState.of(context).uri.queryParameters['id'] == null) {
@@ -76,65 +79,52 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                       ? 'Berhasil merubah data cabang!'
                       : 'Berhasil menambahkan data cabang!',
                   title: 'Berhasil');
-              context.go('/cabang/page');
+              context.go('/branch/page');
             } else if (state is CreateBranchErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);
             }
           },
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                color: state ? blueDefaultDark : Colors.white,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.grey.withOpacity(0.2))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextGlobal(
-                  message: 'Tambah Cabang',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                BreadCrumbGlobal(
-                  firstHref: '/cabang/page',
-                  firstTitle: 'Cabang',
-                  typeBreadcrumb:
-                      GoRouterState.of(context).uri.queryParameters['id'] ==
-                              null
-                          ? 'Create'
-                          : 'Edit',
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextGlobal(
-                          message: "Input Data Cabang ",
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                        TextGlobal(
-                            message: "Silahkan masukkan semua data cabang."),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: _inputDataCabang(),
-                    ),
-                  ],
-                )
-              ],
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: state ? blueDefaultDark : Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey.withOpacity(0.2))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextGlobal(
+                    message: 'Tambah Cabang',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  BreadCrumbGlobal(
+                    firstHref: '/branch/page',
+                    firstTitle: 'Cabang',
+                    typeBreadcrumb:
+                        GoRouterState.of(context).uri.queryParameters['id'] ==
+                                null
+                            ? 'Create'
+                            : 'Edit',
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        child: _inputDataCabang(),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         );
@@ -149,11 +139,230 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
             key: _formKey,
             child: Column(
               children: [
-                Row(
+                ResponsiveForm.responsiveForm(children: [
+                  FormGlobal(
+                    title: "Nama Cabang",
+                    controller: state.isUpdate == false
+                        ? state.formStatus is InitialFormStatus
+                            ? TextEditingController(text: '')
+                            : null
+                        : TextEditingController(text: state.branch?.name),
+                    onChanged: (p0) {
+                      var empl = state.branch;
+                      if (empl == null) {
+                        empl = BranchModel(name: p0);
+                      } else {
+                        empl = empl.copyWith(name: p0);
+                      }
+
+                      context.read<CreateBranchBloc>().add(
+                          CreateBranchChangedEvent(
+                              branchData: empl, isUpdate: false));
+                    },
+                    validator: (p0) {
+                      if (state.branch == null || state.branch!.name == null) {
+                        return 'Nama harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                  FormGlobal(
+                    title: "Alamat Cabang",
+                    controller: state.isUpdate == false
+                        ? state.formStatus is InitialFormStatus
+                            ? TextEditingController(text: '')
+                            : null
+                        : TextEditingController(text: state.branch?.address),
+                    onChanged: (p0) {
+                      var empl = state.branch;
+                      if (empl == null) {
+                        empl = BranchModel(address: p0);
+                      } else {
+                        empl = empl.copyWith(address: p0);
+                      }
+
+                      context.read<CreateBranchBloc>().add(
+                          CreateBranchChangedEvent(
+                              branchData: empl, isUpdate: false));
+                    },
+                    validator: (p0) {
+                      if (state.branch == null ||
+                          state.branch!.address == null) {
+                        return 'Alamat harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      final time = await showTimePicker(
+                          context: context, initialTime: TimeOfDay.now());
+                      var timeInAttendance = time!.format(context);
+
+                      var empl = state.branch;
+                      if (empl == null) {
+                        empl = BranchModel(
+                            timeInAttendance: timeInAttendance
+                                .replaceAll(' PM', '')
+                                .replaceAll(" AM", ''));
+                      } else {
+                        empl = empl.copyWith(
+                            timeInAttendance: timeInAttendance
+                                .replaceAll(' PM', '')
+                                .replaceAll(" AM", ''));
+                      }
+
+                      context.read<CreateBranchBloc>().add(
+                          CreateBranchChangedEvent(
+                              branchData: empl, isUpdate: false));
+                    },
+                    child: FormGlobal(
+                      title: "Jam Masuk",
+                      isDisabled: true,
+                      controller: TextEditingController(
+                          text: state.branch?.timeInAttendance),
+                      onChanged: (p0) {},
+                      validator: (p0) {
+                        if (state.branch == null ||
+                            state.branch!.timeInAttendance == null) {
+                          return 'Jam Masuk harus diisi!';
+                        }
+
+                        return null;
+                      },
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      final time = await showTimePicker(
+                          context: context, initialTime: TimeOfDay.now());
+                      var timeOutAttendance = time!.format(context);
+                      var empl = state.branch;
+                      if (empl == null) {
+                        empl = BranchModel(
+                            timeOutAttendance: timeOutAttendance
+                                .replaceAll(' PM', '')
+                                .replaceAll(" AM", ''));
+                      } else {
+                        empl = empl.copyWith(
+                            timeOutAttendance: timeOutAttendance
+                                .replaceAll(' PM', '')
+                                .replaceAll(" AM", ''));
+                      }
+
+                      context.read<CreateBranchBloc>().add(
+                          CreateBranchChangedEvent(
+                              branchData: empl, isUpdate: false));
+                    },
+                    child: FormGlobal(
+                      title: "Jam Keluar",
+                      isDisabled: true,
+                      controller: TextEditingController(
+                          text: state.branch?.timeOutAttendance),
+                      onChanged: (p0) {},
+                      validator: (p0) {
+                        if (state.branch == null ||
+                            state.branch!.timeOutAttendance == null) {
+                          return 'Jam Keluar harus diisi!';
+                        }
+
+                        return null;
+                      },
+                    ),
+                  ),
+                  FormGlobal(
+                    title: "Toleransi Waktu Absen (Menit)",
+                    keyboardType: TextInputType.number,
+                    controller: state.isUpdate == false
+                        ? state.formStatus is InitialFormStatus
+                            ? TextEditingController(text: '')
+                            : null
+                        : TextEditingController(
+                            text: "${state.branch?.toleranceAttend}"),
+                    onChanged: (p0) {
+                      if (p0 == '') {
+                        return;
+                      }
+
+                      var empl = state.branch;
+                      if (empl == null) {
+                        empl = BranchModel(toleranceAttend: int.parse(p0));
+                      } else {
+                        empl = empl.copyWith(toleranceAttend: int.parse(p0));
+                      }
+
+                      context.read<CreateBranchBloc>().add(
+                          CreateBranchChangedEvent(
+                              branchData: empl, isUpdate: false));
+                    },
+                    validator: (p0) {
+                      if (state.branch == null ||
+                          state.branch!.toleranceAttend == null) {
+                        return 'Toleransi Waktu harus diisi!';
+                      }
+
+                      return null;
+                    },
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: FormGlobal(
+                          title: "Radius Absensi",
+                          keyboardType: TextInputType.number,
+                          controller: state.isUpdate == false
+                              ? state.formStatus is InitialFormStatus
+                                  ? TextEditingController(text: '')
+                                  : null
+                              : TextEditingController(
+                                  text: "${state.branch?.radius}"),
+                          onChanged: (p0) {
+                            if (p0 == '') {
+                              return;
+                            }
+
+                            var empl = state.branch;
+                            if (empl == null) {
+                              empl = BranchModel(radius: int.parse(p0));
+                            } else {
+                              empl = empl.copyWith(radius: int.parse(p0));
+                            }
+
+                            context.read<CreateBranchBloc>().add(
+                                CreateBranchChangedEvent(
+                                    branchData: empl, isUpdate: false));
+                          },
+                          validator: (p0) {
+                            if (state.branch == null ||
+                                state.branch!.radius == null) {
+                              return 'Radius harus diisi!';
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(top: 16),
+                          child: TextGlobal(message: 'Meter'))
+                    ],
+                  ),
+                ]),
+                const SizedBox(
+                  height: 20,
+                ),
+                ResponsiveForm.responsiveForm(
                   children: [
-                    Expanded(
+                    SizedBox(
                       child: SizedBox(
-                        height: 500,
+                        height: 300,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(5),
                           child: GoogleMap(
@@ -219,268 +428,6 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                             },
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FormGlobal(
-                        title: "Nama Cabang",
-                        controller: state.isUpdate == false
-                            ? state.formStatus is InitialFormStatus
-                                ? TextEditingController(text: '')
-                                : null
-                            : TextEditingController(text: state.branch?.name),
-                        onChanged: (p0) {
-                          var empl = state.branch;
-                          if (empl == null) {
-                            empl = BranchModel(name: p0);
-                          } else {
-                            empl = empl.copyWith(name: p0);
-                          }
-
-                          context.read<CreateBranchBloc>().add(
-                              CreateBranchChangedEvent(
-                                  branchData: empl, isUpdate: false));
-                        },
-                        validator: (p0) {
-                          if (state.branch == null ||
-                              state.branch!.name == null) {
-                            return 'Nama harus diisi!';
-                          }
-
-                          return null;
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: FormGlobal(
-                        title: "Alamat Cabang",
-                        controller: state.isUpdate == false
-                            ? state.formStatus is InitialFormStatus
-                                ? TextEditingController(text: '')
-                                : null
-                            : TextEditingController(
-                                text: state.branch?.address),
-                        onChanged: (p0) {
-                          var empl = state.branch;
-                          if (empl == null) {
-                            empl = BranchModel(address: p0);
-                          } else {
-                            empl = empl.copyWith(address: p0);
-                          }
-
-                          context.read<CreateBranchBloc>().add(
-                              CreateBranchChangedEvent(
-                                  branchData: empl, isUpdate: false));
-                        },
-                        validator: (p0) {
-                          if (state.branch == null ||
-                              state.branch!.address == null) {
-                            return 'Alamat harus diisi!';
-                          }
-
-                          return null;
-                        },
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () async {
-                          final time = await showTimePicker(
-                              context: context, initialTime: TimeOfDay.now());
-                          var timeInAttendance = time!.format(context);
-
-                          var empl = state.branch;
-                          if (empl == null) {
-                            empl = BranchModel(
-                                timeInAttendance: timeInAttendance
-                                    .replaceAll(' PM', '')
-                                    .replaceAll(" AM", ''));
-                          } else {
-                            empl = empl.copyWith(
-                                timeInAttendance: timeInAttendance
-                                    .replaceAll(' PM', '')
-                                    .replaceAll(" AM", ''));
-                          }
-
-                          context.read<CreateBranchBloc>().add(
-                              CreateBranchChangedEvent(
-                                  branchData: empl, isUpdate: false));
-                        },
-                        child: FormGlobal(
-                          title: "Jam Masuk",
-                          isDisabled: true,
-                          controller: TextEditingController(
-                              text: state.branch?.timeInAttendance),
-                          onChanged: (p0) {},
-                          validator: (p0) {
-                            if (state.branch == null ||
-                                state.branch!.timeInAttendance == null) {
-                              return 'Jam Masuk harus diisi!';
-                            }
-
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () async {
-                          final time = await showTimePicker(
-                              context: context, initialTime: TimeOfDay.now());
-                          var timeOutAttendance = time!.format(context);
-                          var empl = state.branch;
-                          if (empl == null) {
-                            empl = BranchModel(
-                                timeOutAttendance: timeOutAttendance
-                                    .replaceAll(' PM', '')
-                                    .replaceAll(" AM", ''));
-                          } else {
-                            empl = empl.copyWith(
-                                timeOutAttendance: timeOutAttendance
-                                    .replaceAll(' PM', '')
-                                    .replaceAll(" AM", ''));
-                          }
-
-                          context.read<CreateBranchBloc>().add(
-                              CreateBranchChangedEvent(
-                                  branchData: empl, isUpdate: false));
-                        },
-                        child: FormGlobal(
-                          title: "Jam Keluar",
-                          isDisabled: true,
-                          controller: TextEditingController(
-                              text: state.branch?.timeOutAttendance),
-                          onChanged: (p0) {},
-                          validator: (p0) {
-                            if (state.branch == null ||
-                                state.branch!.timeOutAttendance == null) {
-                              return 'Jam Keluar harus diisi!';
-                            }
-
-                            return null;
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        child: FormGlobal(
-                          title: "Toleransi Waktu Absen (Menit)",
-                          keyboardType: TextInputType.number,
-                          controller: state.isUpdate == false
-                              ? state.formStatus is InitialFormStatus
-                                  ? TextEditingController(text: '')
-                                  : null
-                              : TextEditingController(
-                                  text: "${state.branch?.toleranceAttend}"),
-                          onChanged: (p0) {
-                            if (p0 == '') {
-                              return;
-                            }
-
-                            var empl = state.branch;
-                            if (empl == null) {
-                              empl =
-                                  BranchModel(toleranceAttend: int.parse(p0));
-                            } else {
-                              empl =
-                                  empl.copyWith(toleranceAttend: int.parse(p0));
-                            }
-
-                            context.read<CreateBranchBloc>().add(
-                                CreateBranchChangedEvent(
-                                    branchData: empl, isUpdate: false));
-                          },
-                          validator: (p0) {
-                            if (state.branch == null ||
-                                state.branch!.toleranceAttend == null) {
-                              return 'Toleransi Waktu harus diisi!';
-                            }
-
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 300,
-                            child: FormGlobal(
-                              title: "Radius Absensi",
-                              keyboardType: TextInputType.number,
-                              controller: state.isUpdate == false
-                                  ? state.formStatus is InitialFormStatus
-                                      ? TextEditingController(text: '')
-                                      : null
-                                  : TextEditingController(
-                                      text: "${state.branch?.radius}"),
-                              onChanged: (p0) {
-                                if (p0 == '') {
-                                  return;
-                                }
-
-                                var empl = state.branch;
-                                if (empl == null) {
-                                  empl = BranchModel(radius: int.parse(p0));
-                                } else {
-                                  empl = empl.copyWith(radius: int.parse(p0));
-                                }
-
-                                context.read<CreateBranchBloc>().add(
-                                    CreateBranchChangedEvent(
-                                        branchData: empl, isUpdate: false));
-                              },
-                              validator: (p0) {
-                                if (state.branch == null ||
-                                    state.branch!.radius == null) {
-                                  return 'Radius harus diisi!';
-                                }
-
-                                return null;
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(top: 16),
-                              child: TextGlobal(message: 'Meter'))
-                        ],
                       ),
                     ),
                   ],

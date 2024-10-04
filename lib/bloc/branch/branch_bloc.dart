@@ -16,10 +16,21 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
     on<BranchLoadedEvent>((event, emit) async {
       final result = await branchRepo.getBranch(event.idCompany);
 
+      var totalData = result.length;
+      var start = (event.page - 1) * event.limit;
+      var end = start + event.limit;
+      var paginatedData =
+          result.sublist(start, end > totalData ? totalData : end);
+
       if (result.length == 0) {
         emit(BranchEmptyState());
       } else {
-        emit(BranchLoadedState(listBranch: result));
+        emit(BranchLoadedState(
+            listInitialBranch: result,
+            listBranch: paginatedData,
+            page: event.page,
+            limit: event.limit,
+            lengthData: result.length));
       }
     });
 

@@ -15,10 +15,21 @@ class HistoryAttendBloc extends Bloc<HistoryAttendEvent, HistoryAttendState> {
     on<HistoryAttendLoadedEvent>((event, emit) async {
       final result = await historyAttendRepo.getHistoryAttend(event.idCompany);
 
+      var totalData = result.length;
+      var start = (event.page - 1) * event.limit;
+      var end = start + event.limit;
+      var paginatedData =
+          result.sublist(start, end > totalData ? totalData : end);
+
       if (result.length == 0) {
         emit(HistoryAttendEmptyState());
       } else {
-        emit(HistoryAttendLoadedState(listHistoryAttend: result));
+        emit(HistoryAttendLoadedState(
+            listInitialHistoryAttend: result,
+            listHistoryAttend: paginatedData,
+            page: event.page,
+            limit: event.limit,
+            lengthData: result.length));
       }
     });
 

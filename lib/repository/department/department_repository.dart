@@ -2,6 +2,7 @@ import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
 import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/department_model.dart';
+import 'package:attend_smart_admin/models/header_table_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,7 +57,7 @@ Future<List<TableRow>> listDataTableDepartment(
               children: [
                 InkWell(
                   onTap: () {
-                    context.go('/jabatan/edit?id=${dataDepartment.id}');
+                    context.go('/department/edit?id=${dataDepartment.id}');
                   },
                   child: Container(
                     padding: const EdgeInsets.all(3),
@@ -112,6 +113,15 @@ Future<List<TableRow>> listDataTableDepartment(
 
 class DepartmentRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  static final listHeaderTable = <HeaderTableModel>[
+    HeaderTableModel(key: '', label: '', width: 100),
+    HeaderTableModel(key: 'name', label: 'Nama', width: 800),
+    HeaderTableModel(
+      key: 'action',
+      width: 150,
+      label: '',
+    ),
+  ];
 
   Future getDepartment(String idCompany, Map<String, dynamic> lasData) async {
     try {
@@ -120,10 +130,10 @@ class DepartmentRepository {
           .where('id_company', isEqualTo: idCompany)
           .get();
 
-      var listDepartment = <DepartmentModel>[];
+      var listDepartment = [];
       for (var i = 0; i < result.docs.length; i++) {
         var data = result.docs[i].data();
-        listDepartment.add(DepartmentModel.fromJson(data));
+        listDepartment.add(data);
       }
 
       return listDepartment;

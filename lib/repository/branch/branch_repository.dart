@@ -2,6 +2,7 @@ import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
 import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/branch_model.dart';
+import 'package:attend_smart_admin/models/header_table_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -127,16 +128,29 @@ Future<List<TableRow>> listDataTableBranch(
 class BranchRepository {
   final firestore = FirebaseFirestore.instance;
 
+  static final listHeaderTable = <HeaderTableModel>[
+    HeaderTableModel(key: 'name', label: 'Nama', width: 250),
+    HeaderTableModel(key: 'address', label: 'Alamat', width: 250),
+    HeaderTableModel(key: 'time_in_attendance', label: 'Jam Masuk', width: 150),
+    HeaderTableModel(
+        key: 'time_out_attendance', label: 'Jam Keluar', width: 150),
+    HeaderTableModel(
+      key: 'action',
+      width: 150,
+      label: '',
+    ),
+  ];
+
   Future getBranch(String idCompany) async {
     try {
       var result = await firestore
           .collection('branch')
           .where('id_company', isEqualTo: idCompany)
           .get();
-      var listBranch = <BranchModel>[];
+      var listBranch = [];
       for (var i = 0; i < result.docs.length; i++) {
         var data = result.docs[i].data();
-        listBranch.add(BranchModel.fromJson(data));
+        listBranch.add(data);
       }
 
       return listBranch;

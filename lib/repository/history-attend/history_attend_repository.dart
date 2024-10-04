@@ -1,4 +1,5 @@
 import 'package:attend_smart_admin/components/global_text_component.dart';
+import 'package:attend_smart_admin/models/header_table_model.dart';
 import 'package:attend_smart_admin/models/history_attend_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -166,6 +167,25 @@ Future<List<TableRow>> listDataTableHistoryAttend(
 class HistoryAttendRepository {
   final firestore = FirebaseFirestore.instance;
 
+  static final listHeaderTable = <HeaderTableModel>[
+    HeaderTableModel(key: 'image_attend', label: '', width: 50, type: 'image'),
+    HeaderTableModel(key: 'name_employee', label: 'Nama', width: 150),
+    HeaderTableModel(key: 'department', label: 'Jabatan', width: 150),
+    HeaderTableModel(key: 'name_branch', label: 'Cabang', width: 150),
+    HeaderTableModel(key: 'location_attend', label: 'Lokasi Absen', width: 200),
+    HeaderTableModel(key: 'tipe_absen', label: 'Tipe Absen', width: 100),
+    HeaderTableModel(
+        key: 'date_attend,time_attend',
+        label: 'Waktu Absen',
+        width: 200,
+        type: 'date'),
+    HeaderTableModel(
+      key: 'action',
+      width: 150,
+      label: '',
+    ),
+  ];
+
   Future getHistoryAttend(String idCompany) async {
     try {
       var result = await firestore
@@ -173,10 +193,10 @@ class HistoryAttendRepository {
           .where('id_company', isEqualTo: idCompany)
           .get();
 
-      var listHistoryAttend = <HistoryAttendModel>[];
+      var listHistoryAttend = [];
       for (var i = 0; i < result.docs.length; i++) {
         var data = result.docs[i].data();
-        listHistoryAttend.add(HistoryAttendModel.fromJson(data));
+        listHistoryAttend.add(data);
       }
 
       return listHistoryAttend;

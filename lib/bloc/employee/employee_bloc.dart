@@ -16,15 +16,29 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     on<EmployeeLoadedEvent>((event, emit) async {
       final result = await employeeRepo.getEmployee(event.idCompany);
 
+      var totalData = result.length;
+      var start = (event.page - 1) * event.limit;
+      var end = start + event.limit;
+      var paginatedData =
+          result.sublist(start, end > totalData ? totalData : end);
+
       if (result.length == 0) {
         emit(EmployeeEmptyState());
       } else {
-        emit(EmployeeLoadedState(listEmployee: result));
+        emit(EmployeeLoadedState(
+            listInitialEmployee: result,
+            listEmployee: paginatedData,
+            page: event.page,
+            limit: event.limit,
+            lengthData: result.length));
       }
     });
 
     on<EmployeeDeleteEvent>((event, emit) async {
-      final result = await employeeRepo.deleteEmployee(id: event.id);
+      final result =
+          await employeeRepo.deleteEmployee(id: event.dataEmployee.id!);
+
+      await employeeRepo.deleteAccount(id: event.dataEmployee.idAccount!);
       if (result.runtimeType == String) {
         emit(EmployeeDeleteErrorState(message: result));
       } else {
@@ -48,6 +62,10 @@ class CreateEmployeeBloc
             formStatus: ChangedFormStatus()));
       } else if (event is CreateEmployeeAddedEvent) {
         try {
+          emit(state.copyWith(
+              employee: event.employeeData,
+              isUpdate: false,
+              formStatus: LoadingButtonStatus()));
           var randomString = getRandomString(10);
           var employeeData = state.employee;
 
@@ -64,7 +82,12 @@ class CreateEmployeeBloc
             isUpdateEmployee = false;
           }
 
+          employeeData?.idAccount ??=
+              employeeData.id?.replaceAll('employee', 'account');
+
           idEmployee = employeeData?.id ?? '';
+
+          employeeData?.tokenNotif = employeeData.tokenNotif ?? '';
 
           var result =
               await employeeRepo.addEmployee(employee: state.employee!);
@@ -73,7 +96,7 @@ class CreateEmployeeBloc
             emit(CreateEmployeeErrorState(message: state.errorMessage));
           } else {
             var accountData = AccountModel(
-              id: 'account_${event.accountData.idCompany}_$randomString',
+              id: employeeData?.idAccount,
               name: event.employeeData.name,
               email:
                   '${event.employeeData.name?.replaceAll(' ', '').toLowerCase()}${getRandomString(3)}@${event.accountData.idCompany?.toLowerCase()}.com',
@@ -102,6 +125,10 @@ class CreateEmployeeBloc
     });
 
     on<CreateEmployeeByIdEvent>((event, emit) async {
+      emit(state.copyWith(
+          employee: EmployeeModel(),
+          isUpdate: false,
+          formStatus: LoadingFormStatus()));
       var result = await employeeRepo.getEmployeeById(id: event.id);
       if (result.runtimeType == String) {
         emit(CreateEmployeeErrorState(message: result));

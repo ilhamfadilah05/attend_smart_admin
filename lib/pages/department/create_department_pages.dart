@@ -37,13 +37,17 @@ class _CreateDepartmentPagesState extends State<CreateDepartmentPages> {
         await context.read<AccountCubit>().init() ?? AccountModel();
 
     if (accountData.idCompany == null) {
-      context.pushReplacement('/login');
+      Router.neglect(context, () {
+        context.pushReplacement('/login');
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (GoRouterState.of(context).matchedLocation.contains('/jabatan/create')) {
+    if (GoRouterState.of(context)
+        .matchedLocation
+        .contains('/department/create')) {
       context.read<CreateDepartmentBloc>().add(CreateDepartmentInitialEvent());
     } else {
       context.read<CreateDepartmentBloc>().add(CreateDepartmentByIdEvent(
@@ -61,7 +65,7 @@ class _CreateDepartmentPagesState extends State<CreateDepartmentPages> {
                       ? 'Berhasil merubah data jabatan!'
                       : 'Berhasil menambahkan data jabatan!',
                   title: 'Berhasil');
-              context.go('/jabatan/page');
+              context.go('/department/page');
             } else if (state is CreateDepartmentErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);
@@ -85,7 +89,7 @@ class _CreateDepartmentPagesState extends State<CreateDepartmentPages> {
                   height: 10,
                 ),
                 BreadCrumbGlobal(
-                  firstHref: '/jabatan/page',
+                  firstHref: '/department/page',
                   firstTitle: 'Jabatan',
                   typeBreadcrumb:
                       GoRouterState.of(context).uri.queryParameters['id'] ==

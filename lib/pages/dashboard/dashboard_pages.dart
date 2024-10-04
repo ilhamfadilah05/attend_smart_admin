@@ -20,7 +20,9 @@ class DashboardPages extends StatelessWidget {
                 SharedPreferences sharedPrefs =
                     await SharedPreferences.getInstance();
                 sharedPrefs.remove('token');
-                context.pushReplacement('/login');
+                Router.neglect(context, () {
+                  context.pushReplacement('/login');
+                });
                 context.read<LoginBloc>().add(LogoutSubmitted());
               })),
     );

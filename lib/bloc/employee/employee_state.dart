@@ -10,12 +10,22 @@ sealed class EmployeeState extends Equatable {
 final class EmployeeLoadingState extends EmployeeState {}
 
 final class EmployeeLoadedState extends EmployeeState {
-  final List<EmployeeModel> listEmployee;
+  final List listEmployee;
+  final List listInitialEmployee;
+  final int page;
+  final int limit;
+  final int lengthData;
 
-  const EmployeeLoadedState({required this.listEmployee});
+  const EmployeeLoadedState(
+      {required this.listEmployee,
+      required this.listInitialEmployee,
+      required this.page,
+      required this.limit,
+      required this.lengthData});
 
   @override
-  List<Object> get props => [listEmployee];
+  List<Object> get props =>
+      [listEmployee, page, limit, lengthData, listInitialEmployee];
 }
 
 final class EmployeeEmptyState extends EmployeeState {}

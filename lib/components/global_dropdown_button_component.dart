@@ -1,97 +1,3 @@
-// // ignore_for_file: prefer_typing_uninitialized_variables, must_be_immutable
-
-// import 'package:attend_smart_admin/components/global_text_component.dart';
-// import 'package:flutter/material.dart';
-// import 'package:icons_plus/icons_plus.dart';
-
-// class DropdownGlobal extends StatelessWidget {
-//   DropdownGlobal(
-//       {super.key,
-//       required this.listItems,
-//       required this.value,
-//       required this.onChanged,
-//       this.title,
-//       this.colorTextTitle,
-//       this.fontSizeTitle,
-//       this.theme,
-//       this.isDisabled,
-//       this.hint});
-//   var listItems;
-//   var value;
-//   Function(Object?) onChanged;
-//   Color? colorTextTitle;
-//   double? fontSizeTitle;
-//   String? title;
-//   String? hint;
-//   String? theme;
-//   bool? isDisabled = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         title == null
-//             ? Container()
-//             : Column(
-//                 children: [
-//                   TextGlobal(
-//                     message: title!,
-//                     colorText: colorTextTitle ?? Colors.black,
-//                     fontSize: fontSizeTitle ?? 12,
-//                   ),
-//                   const SizedBox(
-//                     height: 5,
-//                   )
-//                 ],
-//               ),
-//         Container(
-//           padding: const EdgeInsets.symmetric(horizontal: 10),
-//           decoration: BoxDecoration(
-//               border: theme == null
-//                   ? Border.all(color: Colors.grey.withOpacity(0.2))
-//                   : theme == 'theme1'
-//                       ? const Border(bottom: BorderSide(color: Colors.grey))
-//                       : Border.all(color: Colors.grey.withOpacity(0.2)),
-//               borderRadius: theme != null ? null : BorderRadius.circular(5)),
-//           child: Column(
-//             children: [
-//               DropdownButtonHideUnderline(
-//                 child: DropdownButton(
-//                     focusColor: Colors.transparent,
-//                     dropdownColor: Colors.white,
-//                     hint: hint == null
-//                         ? null
-//                         : TextGlobal(
-//                             message: hint!,
-//                             colorText: Colors.grey,
-//                           ),
-//                     value: value,
-//                     icon: const Icon(Iconsax.arrow_square_down_outline,
-//                         color: Colors.grey),
-//                     isExpanded: true,
-//                     items:
-//                         listItems.map<DropdownMenuItem<String>>((String value) {
-//                       return DropdownMenuItem<String>(
-//                         value: value,
-//                         child: TextGlobal(
-//                           message: value,
-//                           colorText: value.contains('Pilih')
-//                               ? Colors.grey
-//                               : Colors.black,
-//                         ),
-//                       );
-//                     }).toList(),
-//                     onChanged: onChanged),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
 // ignore_for_file: prefer_typing_uninitialized_variables, must_be_immutable, prefer_const_constructors
 
 import 'package:attend_smart_admin/components/global_text_component.dart';
@@ -104,18 +10,22 @@ class DropdownGlobal extends StatelessWidget {
       required this.value,
       required this.onChanged,
       this.title,
+      this.titleWidget,
       this.errorForm,
       this.errorFormMessage,
       this.theme,
-      this.hint});
+      this.hint,
+      this.isDisabled});
   var listItems;
   var value;
   Function(Object?) onChanged;
   String? title;
+  Widget? titleWidget;
   String? hint;
   String? theme;
   bool? errorForm;
   String? errorFormMessage;
+  bool? isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +33,16 @@ class DropdownGlobal extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         title == null
-            ? Container()
+            ? titleWidget == null
+                ? Container()
+                : Column(
+                    children: [
+                      titleWidget!,
+                      const SizedBox(
+                        height: 5,
+                      )
+                    ],
+                  )
             : Column(
                 children: [
                   TextGlobal(message: title!),
@@ -136,8 +55,10 @@ class DropdownGlobal extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              // padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
+                  color:
+                      isDisabled == true ? Colors.grey.withOpacity(0.1) : null,
                   border: theme == null
                       ? Border.all(
                           color: errorForm == null
@@ -150,37 +71,59 @@ class DropdownGlobal extends StatelessWidget {
                           : Border.all(color: Colors.grey.withOpacity(0.2)),
                   borderRadius:
                       theme != null ? null : BorderRadius.circular(5)),
-              child: Column(
-                children: [
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton(
-                        focusColor: Colors.transparent,
-                        dropdownColor: Colors.white,
-                        hint: hint == null
-                            ? null
-                            : TextGlobal(
-                                message: hint!,
-                                colorText: Colors.grey,
-                              ),
-                        value: value,
-                        // value:
-                        //     value == null || value == '' ? listItems.first : value,
-                        isExpanded: true,
-                        items: listItems
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: TextGlobal(
-                              message: value,
-                              colorText: value.contains('Pilih')
-                                  ? Colors.grey
-                                  : Colors.black,
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                    horizontal: theme == 'theme1' ? 0 : 10),
+                child: Column(
+                  children: [
+                    isDisabled == true
+                        ? Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextGlobal(
+                                  message: value ?? '',
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: Colors.grey,
+                                )
+                              ],
                             ),
-                          );
-                        }).toList(),
-                        onChanged: onChanged),
-                  ),
-                ],
+                          )
+                        : DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                                focusColor: Colors.transparent,
+                                dropdownColor: Colors.white,
+                                hint: hint == null
+                                    ? null
+                                    : TextGlobal(
+                                        message: hint!,
+                                        colorText: Colors.grey,
+                                      ),
+                                value: value,
+                                // value:
+                                //     value == null || value == '' ? listItems.first : value,
+                                isExpanded: true,
+                                items: listItems.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: TextGlobal(
+                                      message: value,
+                                      fontSize: 12,
+                                      colorText: value.contains('Pilih')
+                                          ? Colors.grey
+                                          : Colors.black,
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: onChanged),
+                          ),
+                  ],
+                ),
               ),
             ),
             errorForm == null ||

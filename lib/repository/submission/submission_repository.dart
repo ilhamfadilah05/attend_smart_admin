@@ -1,6 +1,7 @@
 import 'package:attend_smart_admin/bloc/submission/submission_bloc.dart';
 import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
+import 'package:attend_smart_admin/models/header_table_model.dart';
 import 'package:attend_smart_admin/models/submission_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -83,16 +84,20 @@ Future<List<TableRow>> listDataTableSubmission(
       ),
       TableCell(
         child: Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(5),
+          margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
               color: dataSubmission.status == 'pending'
                   ? Colors.amber
                   : dataSubmission.status == 'approved'
                       ? Colors.green
                       : Colors.grey),
-          child: TextGlobal(
-            message: dataSubmission.status ?? '-',
-            colorText: Colors.white,
+          child: Center(
+            child: TextGlobal(
+              message: dataSubmission.status?.toUpperCase() ?? '-',
+              colorText: Colors.white,
+            ),
           ),
         ),
       ),
@@ -110,7 +115,7 @@ Future<List<TableRow>> listDataTableSubmission(
               children: [
                 InkWell(
                   onTap: () {
-                    context.go('/pengajuan/edit?id=${dataSubmission.id}');
+                    context.go('/submission/edit?id=${dataSubmission.id}');
                   },
                   child: Container(
                     padding: const EdgeInsets.all(3),
@@ -167,6 +172,23 @@ Future<List<TableRow>> listDataTableSubmission(
 class SubmissionRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  static final listHeaderTable = <HeaderTableModel>[
+    HeaderTableModel(key: 'name_employee', label: 'Nama Karyawan', width: 250),
+    HeaderTableModel(key: 'type', label: 'Tipe', width: 100),
+    HeaderTableModel(
+        key: 'date_start,date_end',
+        label: 'Tanggal',
+        width: 150,
+        type: 'double-key-date'),
+    HeaderTableModel(key: 'status', label: 'Status', width: 100),
+    HeaderTableModel(key: 'reason', label: 'Keterangan', width: 200),
+    HeaderTableModel(
+      key: 'action',
+      width: 150,
+      label: '',
+    ),
+  ];
+
   Future getSubmission(String idCompany, Map<String, dynamic> lasData) async {
     try {
       var result = await firestore
@@ -174,10 +196,10 @@ class SubmissionRepository {
           .where('id_company', isEqualTo: idCompany)
           .get();
 
-      var listSubmission = <SubmissionModel>[];
+      var listSubmission = [];
       for (var i = 0; i < result.docs.length; i++) {
         var data = result.docs[i].data();
-        listSubmission.add(SubmissionModel.fromJson(data));
+        listSubmission.add(data);
       }
 
       return listSubmission;

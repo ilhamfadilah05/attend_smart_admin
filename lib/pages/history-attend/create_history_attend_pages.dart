@@ -9,9 +9,9 @@ import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_form_component.dart';
+import 'package:attend_smart_admin/components/global_responsive_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
-import 'package:attend_smart_admin/models/history_attend_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +46,9 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
         await context.read<AccountCubit>().init() ?? AccountModel();
 
     if (accountData.idCompany == null) {
-      context.pushReplacement('/login');
+      Router.neglect(context, () {
+        context.pushReplacement('/login');
+      });
     }
   }
 
@@ -89,288 +91,97 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
                 color: stateTheme ? blueDefaultDark : Colors.white,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.grey.withOpacity(0.2))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextGlobal(
-                  message: 'Edit Histori Absensi',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                BreadCrumbGlobal(
-                  firstHref: '/history-attend/page',
-                  firstTitle: 'Histori absensi',
-                  typeBreadcrumb:
-                      GoRouterState.of(context).uri.queryParameters['id'] ==
-                              null
-                          ? 'Create'
-                          : 'Edit',
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextGlobal(
-                          message: "Edit Data Histori",
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                        TextGlobal(
-                            message: "Silahkan edit data histori disini"),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        child: BlocBuilder<CreateHistoryAttendBloc,
-                            CreateHistoryAttendState>(
-                          builder: (context, state) {
-                            return Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Nama Karyawan",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.nameEmployee),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Jabatan",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.department),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Nama Perusahaan",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.nameCompany),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Nama Cabang",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.nameBranch),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Tipe Absen",
-                                        controller: TextEditingController(
-                                            text:
-                                                state.historyAttend?.tipeAbsen),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Status Absen",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.delayedAttend),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Tanggal Absensi",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.dateAttend),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Waktu Absensi",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.timeAttend),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Lokasi Absensi",
-                                        controller: TextEditingController(
-                                            text: state
-                                                .historyAttend?.locationAttend),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: FormGlobal(
-                                        title: "Longitude & Latitude",
-                                        controller: TextEditingController(
-                                            text: state.historyAttend?.latLong),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextGlobal(
+                    message: 'Edit Histori Absensi',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  BreadCrumbGlobal(
+                    firstHref: '/history',
+                    firstTitle: 'Histori absensi',
+                    typeBreadcrumb:
+                        GoRouterState.of(context).uri.queryParameters['id'] ==
+                                null
+                            ? 'Create'
+                            : 'Edit',
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  BlocBuilder<CreateHistoryAttendBloc,
+                      CreateHistoryAttendState>(
+                    builder: (context, state) {
+                      return ResponsiveForm.responsiveForm(
+                        children: [
+                          FormGlobal(
+                            title: "Nama Karyawan",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.nameEmployee),
+                          ),
+                          FormGlobal(
+                            title: "Jabatan",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.department),
+                          ),
+                          FormGlobal(
+                            title: "Nama Perusahaan",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.nameCompany),
+                          ),
+                          FormGlobal(
+                            title: "Nama Cabang",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.nameBranch),
+                          ),
+                          FormGlobal(
+                            title: "Tipe Absen",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.tipeAbsen),
+                          ),
+                          FormGlobal(
+                            title: "Status Absen",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.delayedAttend),
+                          ),
+                          FormGlobal(
+                            title: "Tanggal Absensi",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.dateAttend),
+                          ),
+                          FormGlobal(
+                            title: "Waktu Absensi",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.timeAttend),
+                          ),
+                          FormGlobal(
+                            title: "Lokasi Absensi",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.locationAttend),
+                          ),
+                          FormGlobal(
+                            title: "Longitude & Latitude",
+                            controller: TextEditingController(
+                                text: state.historyAttend?.latLong),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         );
-      },
-    );
-  }
-
-  Widget _inputDataCabang() {
-    return BlocBuilder<CreateHistoryAttendBloc, CreateHistoryAttendState>(
-      builder: (context, state) {
-        return Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 300,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: GoogleMap(
-                            mapType: MapType.normal,
-                            myLocationEnabled: true,
-                            onTap: (argument) {
-                              setState(() {
-                                marker.clear();
-                                marker.add(Marker(
-                                    markerId: MarkerId("1"),
-                                    position: argument));
-                                latlngPositionMarker = argument;
-                              });
-                              var empl = state.historyAttend;
-                              if (empl == null) {
-                                empl = HistoryAttendModel(
-                                    latLong:
-                                        "${latlngPositionMarker.latitude},${latlngPositionMarker.longitude}");
-                              } else {
-                                empl = empl.copyWith(
-                                    latLong:
-                                        "${latlngPositionMarker.latitude},${latlngPositionMarker.longitude}");
-                              }
-
-                              context.read<CreateHistoryAttendBloc>().add(
-                                  CreateHistoryAttendChangedEvent(
-                                      historyAttendData: empl,
-                                      isUpdate: false));
-                            },
-                            initialCameraPosition:
-                                state.historyAttend?.latLong == null
-                                    ? CameraPosition(
-                                        target: LatLng(-6.345986064677323,
-                                            106.69150610007672),
-                                        zoom: 16,
-                                      )
-                                    : CameraPosition(
-                                        target: LatLng(
-                                            double.parse(state
-                                                .historyAttend!.latLong!
-                                                .split(',')[0]),
-                                            double.parse(state
-                                                .historyAttend!.latLong!
-                                                .split(',')[1])),
-                                        zoom: 16,
-                                      ),
-                            markers: Set<Marker>.of(marker.isEmpty == false
-                                ? marker
-                                : state.historyAttend?.latLong == null
-                                    ? []
-                                    : [
-                                        Marker(
-                                            markerId: MarkerId("1"),
-                                            position: LatLng(
-                                                double.parse(state
-                                                        .historyAttend?.latLong!
-                                                        .split(',')[0] ??
-                                                    '0'),
-                                                double.parse(state
-                                                        .historyAttend?.latLong!
-                                                        .split(',')[1] ??
-                                                    '0')))
-                                      ]),
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller.complete(controller);
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ));
       },
     );
   }

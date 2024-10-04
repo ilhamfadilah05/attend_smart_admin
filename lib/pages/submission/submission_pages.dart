@@ -6,9 +6,11 @@ import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
-import 'package:attend_smart_admin/components/global_table_component.dart';
+import 'package:attend_smart_admin/components/global_data_table_component.dart';
+import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
+import 'package:attend_smart_admin/models/data_table_model.dart';
 import 'package:attend_smart_admin/repository/submission/submission_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,11 +38,12 @@ class _SubmissionPagesState extends State<SubmissionPages> {
     accountData = await context.read<AccountCubit>().init() ?? AccountModel();
 
     if (accountData.idCompany == null) {
-      context.pushReplacement('/login');
+      Router.neglect(context, () {
+        context.pushReplacement('/login');
+      });
     } else {
-      context
-          .read<SubmissionBloc>()
-          .add(SubmissionLoadedEvent(idCompany: accountData.idCompany!));
+      context.read<SubmissionBloc>().add(SubmissionLoadedEvent(
+          idCompany: accountData.idCompany!, page: 1, limit: 5));
     }
   }
 
@@ -56,8 +59,8 @@ class _SubmissionPagesState extends State<SubmissionPages> {
                   type: 'success',
                   message: 'Berhasil menghapus data jabatan.',
                   title: 'Berhasil!');
-              context.read<SubmissionBloc>().add(
-                  SubmissionLoadedEvent(idCompany: accountData.idCompany!));
+              context.read<SubmissionBloc>().add(SubmissionLoadedEvent(
+                  idCompany: accountData.idCompany!, page: 1, limit: 5));
             }
           },
           child: Container(
@@ -78,7 +81,7 @@ class _SubmissionPagesState extends State<SubmissionPages> {
                   height: 10,
                 ),
                 const BreadCrumbGlobal(
-                  firstHref: '/pengajuan/page',
+                  firstHref: '/submission/page',
                   firstTitle: 'Pengajuan',
                   typeBreadcrumb: 'List',
                 ),
@@ -113,40 +116,52 @@ class _SubmissionPagesState extends State<SubmissionPages> {
                         ),
                       );
                     } else if (state is SubmissionLoadedState) {
-                      return FutureBuilder(
-                        future: listDataTableSubmission(
-                            state.listSubmission, context),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Container();
-                          } else if (snapshot.hasData) {
-                            var listDataSubmission = snapshot.data;
-                            return TableGlobal(
-                                data: listDataSubmission!,
-                                headers: listHeaderTableSubmission,
-                                page: page,
-                                pageChanged: (p0) {
-                                  setState(() {
-                                    page = p0;
-                                  });
-                                  context
-                                      .read<SubmissionBloc>()
-                                      .add(SubmissionLoadedEvent(
-                                        idCompany: accountData.idCompany!,
-                                      ));
-                                },
-                                pageTotal: state.listSubmission.length,
-                                widthTable:
-                                    MediaQuery.of(context).size.width <= 800
-                                        ? 100
-                                        : 190);
-                          }
-
-                          return Center(child: TextGlobal(message: 'message'));
+                      return DataTableWidget(
+                        listData: state.listSubmission.map((e) => e).toList(),
+                        listHeaderTable: SubmissionRepository.listHeaderTable,
+                        dataTableOthers: DataTableOthersModel(
+                          page: state.page,
+                          pageSize: state.lengthData,
+                          limit: state.limit,
+                          totalData: state.lengthData,
+                        ),
+                        isEdit: true,
+                        isDelete: true,
+                        onTapEdit: (id) {
+                          Router.neglect(context, () {
+                            context.go('/submission/edit?id=$id');
+                          });
                         },
+                        onTapDelete: (id) {
+                          dialogQuestion(context, onTapYes: () {
+                            context
+                                .read<SubmissionBloc>()
+                                .add(SubmissionDeleteEvent(id: id));
+                            Navigator.pop(context);
+                          },
+                              icon: const Icon(
+                                Iconsax.trash_bold,
+                                color: Colors.red,
+                                size: 100,
+                              ),
+                              message:
+                                  'Apakah anda yakin ingin menghapus data ini?');
+                        },
+                        onTapPage: (page) {
+                          context.read<SubmissionBloc>().add(
+                              SubmissionLoadedEvent(
+                                  idCompany: accountData.idCompany!,
+                                  page: page,
+                                  limit: state.limit));
+                        },
+                        onTapLimit: (limit) {
+                          context.read<SubmissionBloc>().add(
+                              SubmissionLoadedEvent(
+                                  idCompany: accountData.idCompany!,
+                                  page: state.page,
+                                  limit: int.parse(limit)));
+                        },
+                        onTapSort: (indexHeader, key) {},
                       );
                     }
 

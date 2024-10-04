@@ -10,12 +10,22 @@ sealed class SubmissionState extends Equatable {
 final class SubmissionLoadingState extends SubmissionState {}
 
 final class SubmissionLoadedState extends SubmissionState {
-  final List<SubmissionModel> listSubmission;
+  final List listSubmission;
+  final List listInitialSubmission;
+  final int page;
+  final int limit;
+  final int lengthData;
 
-  const SubmissionLoadedState({required this.listSubmission});
+  const SubmissionLoadedState(
+      {required this.listSubmission,
+      required this.listInitialSubmission,
+      required this.page,
+      required this.limit,
+      required this.lengthData});
 
   @override
-  List<Object> get props => [listSubmission];
+  List<Object> get props =>
+      [listSubmission, page, limit, lengthData, listInitialSubmission];
 }
 
 final class SubmissionEmptyState extends SubmissionState {}

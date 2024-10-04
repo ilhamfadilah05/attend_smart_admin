@@ -7,7 +7,6 @@ import 'package:equatable/equatable.dart';
 
 import '../history-attend/history_attend_bloc.dart';
 
-
 part 'department_event.dart';
 part 'department_state.dart';
 
@@ -17,10 +16,21 @@ class DepartmentBloc extends Bloc<DepartmentEvent, DepartmentState> {
     on<DepartmentLoadedEvent>((event, emit) async {
       final result = await departmentRepo.getDepartment(event.idCompany, {});
 
+      var totalData = result.length;
+      var start = (event.page - 1) * event.limit;
+      var end = start + event.limit;
+      var paginatedData =
+          result.sublist(start, end > totalData ? totalData : end);
+
       if (result.length == 0) {
         emit(DepartmentEmptyState());
       } else {
-        emit(DepartmentLoadedState(listDepartment: result));
+        emit(DepartmentLoadedState(
+            listInitialDepartment: result,
+            listDepartment: paginatedData,
+            page: event.page,
+            limit: event.limit,
+            lengthData: result.length));
       }
     });
 

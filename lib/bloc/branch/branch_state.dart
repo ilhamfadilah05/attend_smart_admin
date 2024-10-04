@@ -10,12 +10,22 @@ sealed class BranchState extends Equatable {
 final class BranchLoadingState extends BranchState {}
 
 final class BranchLoadedState extends BranchState {
-  final List<BranchModel> listBranch;
+  final List listBranch;
+  final List listInitialBranch;
+  final int page;
+  final int limit;
+  final int lengthData;
 
-  const BranchLoadedState({required this.listBranch});
+  const BranchLoadedState(
+      {required this.listBranch,
+      required this.listInitialBranch,
+      required this.page,
+      required this.limit,
+      required this.lengthData});
 
   @override
-  List<Object> get props => [listBranch];
+  List<Object> get props =>
+      [listBranch, page, limit, lengthData, listInitialBranch];
 }
 
 final class BranchEmptyState extends BranchState {}
@@ -39,7 +49,6 @@ final class BranchDeleteErrorState extends BranchState {
   @override
   List<Object> get props => [message];
 }
-
 // Create Branch State
 
 class CreateBranchState extends Equatable {

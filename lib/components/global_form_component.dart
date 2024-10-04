@@ -15,6 +15,7 @@ class FormGlobal extends StatelessWidget {
       this.validator,
       this.keyboardType,
       this.controller,
+      this.maxLines,
       this.isDisabled = false});
   String? title;
   Function(String)? onChanged;
@@ -22,6 +23,7 @@ class FormGlobal extends StatelessWidget {
   TextInputType? keyboardType;
   TextEditingController? controller;
   bool? isDisabled;
+  int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class FormGlobal extends StatelessWidget {
                 onChanged: onChanged,
                 validator: validator,
                 keyboardType: keyboardType,
+                maxLines: maxLines,
                 inputFormatters: keyboardType == TextInputType.number
                     ? <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly

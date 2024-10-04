@@ -38,7 +38,9 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
         await context.read<AccountCubit>().init() ?? AccountModel();
 
     if (accountData.idCompany == null) {
-      context.pushReplacement('/login');
+      Router.neglect(context, () {
+        context.pushReplacement('/login');
+      });
     }
   }
 
@@ -62,7 +64,7 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
                       ? 'Berhasil merubah data pengajuan!'
                       : 'Berhasil menambahkan data pengajuan!',
                   title: 'Berhasil');
-              context.go('/pengajuan/page');
+              context.go('/submission/page');
             } else if (state is CreateSubmissionErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);
@@ -86,7 +88,7 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
                   height: 10,
                 ),
                 BreadCrumbGlobal(
-                  firstHref: '/pengajuan/page',
+                  firstHref: '/submission/page',
                   firstTitle: 'Pengajuan',
                   typeBreadcrumb:
                       GoRouterState.of(context).uri.queryParameters['id'] ==
@@ -293,7 +295,14 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
                                             MainAxisAlignment.end,
                                         children: [
                                           ButtonGlobal(
-                                            message: "Approval Pengajuan",
+                                            message: "Batalkan Pengajuan",
+                                            onPressed: () {},
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          ButtonGlobal(
+                                            message: "Terima Pengajuan",
                                             onPressed: () {
                                               if (_formKey.currentState!
                                                   .validate()) {

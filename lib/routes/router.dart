@@ -5,13 +5,14 @@ import 'package:attend_smart_admin/routes/route_names.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
-  final SessionState sessionCubit;
+  final SessionState? sessionCubit;
 
-  AppRouter({required this.sessionCubit});
+  AppRouter({this.sessionCubit});
   late final router = GoRouter(
-    initialLocation: sessionCubit is UserAuthenticated
-        ? RouteNames.DASHBOARD
-        : RouteNames.LOGIN,
+    // initialLocation: sessionCubit is UserAuthenticated
+    //     ? RouteNames.DASHBOARD
+    //     : RouteNames.LOGIN,
+    initialLocation: RouteNames.DASHBOARD,
     routes: [
       GoRoute(
         path: RouteNames.LOGIN,

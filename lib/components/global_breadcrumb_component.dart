@@ -20,7 +20,11 @@ class BreadCrumbGlobal extends StatelessWidget {
     return Row(
       children: [
         InkWell(
-          onTap: () => context.go('/dashboard/page'),
+          onTap: () {
+            Router.neglect(context, () {
+              context.go('/dashboard/page');
+            });
+          },
           child: TextGlobal(
             message: 'Home',
           ),
@@ -37,7 +41,11 @@ class BreadCrumbGlobal extends StatelessWidget {
           width: 10,
         ),
         InkWell(
-          onTap: () => context.go(firstHref),
+          onTap: () {
+            Router.neglect(context, () {
+              context.go(firstHref);
+            });
+          },
           child: TextGlobal(
             message: firstTitle,
           ),
