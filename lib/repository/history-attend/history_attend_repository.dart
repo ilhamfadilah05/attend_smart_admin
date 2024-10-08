@@ -173,12 +173,14 @@ class HistoryAttendRepository {
     HeaderTableModel(key: 'department', label: 'Jabatan', width: 150),
     HeaderTableModel(key: 'name_branch', label: 'Cabang', width: 150),
     HeaderTableModel(key: 'location_attend', label: 'Lokasi Absen', width: 200),
-    HeaderTableModel(key: 'tipe_absen', label: 'Tipe Absen', width: 100),
     HeaderTableModel(
         key: 'date_attend,time_attend',
         label: 'Waktu Absen',
         width: 200,
-        type: 'date'),
+        type: 'double-key-date-time'),
+    HeaderTableModel(key: 'tipe_absen', label: 'Tipe Absen', width: 100),
+    HeaderTableModel(
+        key: 'created_at', label: 'Dibuat', width: 150, type: 'date'),
     HeaderTableModel(
       key: 'action',
       width: 150,

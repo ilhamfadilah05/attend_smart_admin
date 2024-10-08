@@ -16,13 +16,42 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     on<EmployeeLoadedEvent>((event, emit) async {
       final result = await employeeRepo.getEmployee(event.idCompany);
 
-      var totalData = result.length;
+      // Terapkan semua filter secara bersamaan
+      var filteredData = result.where((element) {
+        bool matchesName = true;
+        bool matchesDepartment = true;
+        bool matchesBranch = true;
+
+        if (event.searchName != null) {
+          matchesName = element['name']
+              .toLowerCase()
+              .contains(event.searchName!.toLowerCase());
+        }
+
+        if (event.searchDepartment != null) {
+          matchesDepartment = element['department']
+              .toLowerCase()
+              .contains(event.searchDepartment!.toLowerCase());
+        }
+
+        if (event.searchBranch != null) {
+          matchesBranch = element['name_branch']
+              .toLowerCase()
+              .contains(event.searchBranch!.toLowerCase());
+        }
+
+        // Hanya yang memenuhi ketiga filter yang akan dipertahankan
+        return matchesName && matchesDepartment && matchesBranch;
+      }).toList();
+
+      // Paginasi setelah filter diterapkan
+      var totalData = filteredData.length;
       var start = (event.page - 1) * event.limit;
       var end = start + event.limit;
       var paginatedData =
-          result.sublist(start, end > totalData ? totalData : end);
+          filteredData.sublist(start, end > totalData ? totalData : end);
 
-      if (result.length == 0) {
+      if (filteredData.isEmpty) {
         emit(EmployeeEmptyState());
       } else {
         emit(EmployeeLoadedState(
@@ -30,7 +59,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
             listEmployee: paginatedData,
             page: event.page,
             limit: event.limit,
-            lengthData: result.length));
+            lengthData: filteredData.length));
       }
     });
 
@@ -85,20 +114,21 @@ class CreateEmployeeBloc
           employeeData?.idAccount ??=
               employeeData.id?.replaceAll('employee', 'account');
 
+          employeeData?.tokenNotif = employeeData.tokenNotif;
+
           idEmployee = employeeData?.id ?? '';
 
           employeeData?.tokenNotif = employeeData.tokenNotif ?? '';
 
-          var result =
-              await employeeRepo.addEmployee(employee: state.employee!);
+          var result = await employeeRepo.addEmployee(employee: employeeData!);
 
           if (result.runtimeType == String) {
             emit(CreateEmployeeErrorState(message: state.errorMessage));
           } else {
             var accountData = AccountModel(
-              id: employeeData?.idAccount,
+              id: employeeData.idAccount,
               name: event.employeeData.name,
-              email:
+              email: event.employeeData.email ??
                   '${event.employeeData.name?.replaceAll(' ', '').toLowerCase()}${getRandomString(3)}@${event.accountData.idCompany?.toLowerCase()}.com',
               password: 'MTIzNDU2Nzg=', // 12345678,
               idCompany: event.accountData.idCompany,

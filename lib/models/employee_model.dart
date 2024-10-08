@@ -16,26 +16,27 @@ class EmployeeModel {
   String? workingStatus;
   String? image;
   String? tokenNotif;
+  String? email;
 
-  EmployeeModel({
-    this.id,
-    this.idCompany,
-    this.name,
-    this.nameCompany,
-    this.idBranch,
-    this.idAccount,
-    this.nameBranch,
-    this.gender,
-    this.nohp,
-    this.nik,
-    this.address,
-    this.remainingCuti,
-    this.totalCuti,
-    this.department,
-    this.workingStatus,
-    this.image,
-    this.tokenNotif,
-  });
+  EmployeeModel(
+      {this.id,
+      this.idCompany,
+      this.name,
+      this.nameCompany,
+      this.idBranch,
+      this.idAccount,
+      this.nameBranch,
+      this.gender,
+      this.nohp,
+      this.nik,
+      this.address,
+      this.remainingCuti,
+      this.totalCuti,
+      this.department,
+      this.workingStatus,
+      this.image,
+      this.tokenNotif,
+      this.email});
 
   EmployeeModel copyWith(
       {String? id,
@@ -54,7 +55,8 @@ class EmployeeModel {
       String? department,
       String? workingStatus,
       String? image,
-      String? tokenNotif}) {
+      String? tokenNotif,
+      String? email}) {
     return EmployeeModel(
         id: id ?? this.id,
         idCompany: idCompany ?? this.idCompany,
@@ -72,7 +74,8 @@ class EmployeeModel {
         department: department ?? this.department,
         workingStatus: workingStatus ?? this.workingStatus,
         image: image ?? this.image,
-        tokenNotif: tokenNotif ?? this.tokenNotif);
+        tokenNotif: tokenNotif ?? this.tokenNotif,
+        email: email ?? this.email);
   }
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
@@ -94,6 +97,7 @@ class EmployeeModel {
       workingStatus: json['working_status'],
       image: json['image'],
       tokenNotif: json['token_notif'],
+      email: json['email'],
     );
   }
 
@@ -115,7 +119,8 @@ class EmployeeModel {
       'department': department,
       'working_status': workingStatus,
       'image': image,
-      'token_notif': tokenNotif
+      'token_notif': tokenNotif,
+      'email': email
     };
   }
 }

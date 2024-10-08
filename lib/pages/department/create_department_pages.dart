@@ -65,7 +65,9 @@ class _CreateDepartmentPagesState extends State<CreateDepartmentPages> {
                       ? 'Berhasil merubah data jabatan!'
                       : 'Berhasil menambahkan data jabatan!',
                   title: 'Berhasil');
-              context.go('/department/page');
+              Router.neglect(context, () {
+                context.go('/department/page');
+              });
             } else if (state is CreateDepartmentErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);

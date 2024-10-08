@@ -64,7 +64,9 @@ class _CreateSubmissionPagesState extends State<CreateSubmissionPages> {
                       ? 'Berhasil merubah data pengajuan!'
                       : 'Berhasil menambahkan data pengajuan!',
                   title: 'Berhasil');
-              context.go('/submission/page');
+              Router.neglect(context, () {
+                context.go('/submission/page');
+              });
             } else if (state is CreateSubmissionErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);

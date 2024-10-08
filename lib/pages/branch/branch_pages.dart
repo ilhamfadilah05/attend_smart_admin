@@ -170,7 +170,7 @@ class _BranchPagesState extends State<BranchPages> {
                           totalData: state.lengthData,
                         ),
                         isEdit: true,
-                        isDelete: false,
+                        isDelete: true,
                         onTapEdit: (id) {
                           Router.neglect(context, () {
                             context.go('/branch/edit?id=$id');
@@ -200,7 +200,7 @@ class _BranchPagesState extends State<BranchPages> {
                         onTapLimit: (limit) {
                           context.read<BranchBloc>().add(BranchLoadedEvent(
                               idCompany: accountData.idCompany!,
-                              page: state.page,
+                              page: 1,
                               limit: int.parse(limit)));
                         },
                         onTapSort: (indexHeader, key) {},

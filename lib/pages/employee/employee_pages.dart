@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
+import 'package:attend_smart_admin/bloc/branch/branch_bloc.dart';
+import 'package:attend_smart_admin/bloc/department/department_bloc.dart';
 import 'package:attend_smart_admin/bloc/employee/employee_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
@@ -12,6 +14,7 @@ import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/data_table_model.dart';
+import 'package:attend_smart_admin/pages/employee/filter_employee_pages.dart';
 import 'package:attend_smart_admin/repository/employee/employee_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,6 +46,11 @@ class _EmployeePagesState extends State<EmployeePages> {
     } else {
       context.read<EmployeeBloc>().add(EmployeeLoadedEvent(
           idCompany: accountData.idCompany ?? '', page: 1, limit: 5));
+
+      context.read<BranchBloc>().add(BranchLoadedEvent(
+          idCompany: accountData.idCompany!, page: 1, limit: 1000));
+      context.read<DepartmentBloc>().add(DepartmentLoadedEvent(
+          idCompany: accountData.idCompany!, page: 1, limit: 1000));
     }
   }
 
@@ -92,47 +100,40 @@ class _EmployeePagesState extends State<EmployeePages> {
                       const SizedBox(
                         height: 40,
                       ),
-                      MediaQuery.of(context).size.width <= 800
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BlocBuilder<CreateEmployeeBloc,
-                                    CreateEmployeeState>(
-                                  builder: (context, stateCreateEmployee) {
-                                    return ButtonGlobal(
-                                      message: 'Tambah Karyawan',
-                                      onPressed: () {
-                                        context.go('/employee/create');
-                                      },
-                                      colorBtn: blueDefaultLight,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                // ButtonGlobal(
-                                //   message: 'Filter',
-                                //   onPressed: () {},
-                                // ),
-                              ],
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ButtonGlobal(
-                                  message: 'Tambah Karyawan',
-                                  onPressed: () {
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              child: ButtonGlobal(
+                                message: 'Tambah Karyawan',
+                                onPressed: () {
+                                  Router.neglect(context, () {
                                     context.go('/employee/create');
-                                  },
-                                  colorBtn: blueDefaultLight,
-                                ),
-                                // ButtonGlobal(
-                                //   message: 'Filter',
-                                //   onPressed: () {},
-                                // ),
-                              ],
+                                  });
+                                },
+                              ),
                             ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              child: ButtonGlobal(
+                                message: 'Filter',
+                                variant: 'outline',
+                                hoverColor: Colors.grey.withOpacity(0.2),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => FilterEmployeePages(
+                                            accountData: accountData,
+                                          ));
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -211,7 +212,7 @@ class _EmployeePagesState extends State<EmployeePages> {
                                 context.read<EmployeeBloc>().add(
                                     EmployeeLoadedEvent(
                                         idCompany: accountData.idCompany!,
-                                        page: state.page,
+                                        page: 1,
                                         limit: int.parse(limit)));
                               },
                               onTapSort: (indexHeader, key) {},

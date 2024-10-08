@@ -5,9 +5,9 @@ import 'package:attend_smart_admin/bloc/history-attend/history_attend_bloc.dart'
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
 import 'package:attend_smart_admin/components/global_alert_component.dart';
 import 'package:attend_smart_admin/components/global_breadcrumb_component.dart';
-import 'package:attend_smart_admin/components/global_button_component.dart';
 import 'package:attend_smart_admin/components/global_color_components.dart';
 import 'package:attend_smart_admin/components/global_data_table_component.dart';
+import 'package:attend_smart_admin/components/global_dialog_component.dart';
 import 'package:attend_smart_admin/components/global_text_component.dart';
 import 'package:attend_smart_admin/models/account_model.dart';
 import 'package:attend_smart_admin/models/data_table_model.dart';
@@ -81,34 +81,12 @@ class _HistoryAttendPagesState extends State<HistoryAttendPages> {
                     height: 10,
                   ),
                   const BreadCrumbGlobal(
-                    firstHref: '/history',
+                    firstHref: '/history/page',
                     firstTitle: 'Histori Absensi',
                     typeBreadcrumb: 'List',
                   ),
                   const SizedBox(
                     height: 40,
-                  ),
-                  MediaQuery.of(context).size.width <= 800
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ButtonGlobal(
-                              message: 'Filter',
-                              onPressed: () {},
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ButtonGlobal(
-                              message: 'Filter',
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                  const SizedBox(
-                    height: 20,
                   ),
                   BlocBuilder<HistoryAttendBloc, HistoryAttendState>(
                     builder: (context, state) {
@@ -156,7 +134,21 @@ class _HistoryAttendPagesState extends State<HistoryAttendPages> {
                               context.go('/history/edit?id=$id');
                             });
                           },
-                          onTapDelete: (id) {},
+                          onTapDelete: (id) {
+                            dialogQuestion(context, onTapYes: () {
+                              context
+                                  .read<HistoryAttendBloc>()
+                                  .add(HistoryAttendDeleteEvent(id: id));
+                              Navigator.pop(context);
+                            },
+                                icon: const Icon(
+                                  Iconsax.trash_bold,
+                                  color: Colors.red,
+                                  size: 100,
+                                ),
+                                message:
+                                    'Apakah anda yakin ingin menghapus data ini?');
+                          },
                           onTapPage: (page) {
                             context.read<HistoryAttendBloc>().add(
                                 HistoryAttendLoadedEvent(
@@ -168,7 +160,7 @@ class _HistoryAttendPagesState extends State<HistoryAttendPages> {
                             context.read<HistoryAttendBloc>().add(
                                 HistoryAttendLoadedEvent(
                                     idCompany: accountData.idCompany!,
-                                    page: state.page,
+                                    page: 1,
                                     limit: int.parse(limit)));
                           },
                           onTapSort: (indexHeader, key) {},

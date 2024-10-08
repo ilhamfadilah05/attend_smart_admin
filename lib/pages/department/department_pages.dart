@@ -97,7 +97,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                             ButtonGlobal(
                               message: 'Tambah Jabatan',
                               onPressed: () {
-                                context.namedLocation('/department/create');
+                                Router.neglect(context, () {
+                                  context.go('/department/create');
+                                });
                               },
                               colorBtn: blueDefaultLight,
                             ),
@@ -116,7 +118,9 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                             ButtonGlobal(
                               message: 'Tambah Jabatan',
                               onPressed: () {
-                                context.go('/department/create');
+                                Router.neglect(context, () {
+                                  context.go('/department/create');
+                                });
                               },
                               colorBtn: blueDefaultLight,
                             ),
@@ -199,7 +203,7 @@ class _DepartmentPagesState extends State<DepartmentPages> {
                             context.read<DepartmentBloc>().add(
                                 DepartmentLoadedEvent(
                                     idCompany: accountData.idCompany!,
-                                    page: state.page,
+                                    page: 1,
                                     limit: int.parse(limit)));
                           },
                           onTapSort: (indexHeader, key) {},

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:attend_smart_admin/bloc/account/account_cubit.dart';
 import 'package:attend_smart_admin/bloc/sidebar/sidebar_bloc.dart';
 import 'package:attend_smart_admin/bloc/theme/theme_cubit.dart';
@@ -9,6 +11,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreensPages extends StatefulWidget {
   const ScreensPages({super.key});
@@ -264,10 +267,18 @@ class _ScreensPagesState extends State<ScreensPages> {
                             : SideMenuItem(
                                 title: data.label,
                                 icon: Icon(data.icon),
-                                onTap: (index, sideMenuController) {
+                                onTap: (index, sideMenuController) async {
+                                  SharedPreferences sharedPrefs =
+                                      await SharedPreferences.getInstance();
                                   if (data.href == '#') {
-                                    dialogQuestion(context,
-                                        onTapYes: () {},
+                                    dialogQuestion(context, onTapYes: () {
+                                      sharedPrefs.remove('token');
+                                      sharedPrefs.remove('dataUser');
+                                      sharedPrefs.clear();
+                                      Router.neglect(context, () {
+                                        context.pushReplacement('/login');
+                                      });
+                                    },
                                         message:
                                             "Apakah anda yakin ingin keluar dari CMS Sistem Absensi Attend Smart?",
                                         icon: const Icon(

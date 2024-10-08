@@ -15,6 +15,12 @@ class HistoryAttendBloc extends Bloc<HistoryAttendEvent, HistoryAttendState> {
     on<HistoryAttendLoadedEvent>((event, emit) async {
       final result = await historyAttendRepo.getHistoryAttend(event.idCompany);
 
+      result.sort((a, b) {
+        var dateA = DateTime.parse(a['date_attend']);
+        var dateB = DateTime.parse(b['date_attend']);
+        return dateB.compareTo(dateA);
+      });
+
       var totalData = result.length;
       var start = (event.page - 1) * event.limit;
       var end = start + event.limit;

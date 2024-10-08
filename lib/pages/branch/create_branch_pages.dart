@@ -79,7 +79,9 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                       ? 'Berhasil merubah data cabang!'
                       : 'Berhasil menambahkan data cabang!',
                   title: 'Berhasil');
-              context.go('/branch/page');
+              Router.neglect(context, () {
+                context.go('/branch/page');
+              });
             } else if (state is CreateBranchErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);
@@ -368,6 +370,23 @@ class _CreateBranchPagesState extends State<CreateBranchPages> {
                           child: GoogleMap(
                             mapType: MapType.normal,
                             myLocationEnabled: true,
+                            circles: Set<Circle>.of([
+                              Circle(
+                                circleId: CircleId("1"),
+                                center: LatLng(
+                                    double.parse(
+                                        state.branch?.latLong!.split(',')[0] ??
+                                            '0'),
+                                    double.parse(
+                                        state.branch?.latLong!.split(',')[1] ??
+                                            '0')),
+                                fillColor: Colors.green.withOpacity(0.2),
+                                strokeWidth: 4,
+                                strokeColor: Colors.green,
+                                radius: double.parse(
+                                    "${state.branch?.radius ?? 100}"),
+                              )
+                            ]),
                             onTap: (argument) {
                               setState(() {
                                 marker.clear();

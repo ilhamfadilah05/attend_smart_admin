@@ -105,7 +105,9 @@ class _BroadcastPagesState extends State<BroadcastPages> {
                             ButtonGlobal(
                               message: 'Tambah Broadcast',
                               onPressed: () {
-                                context.namedLocation('/broadcast/create');
+                                Router.neglect(context, () {
+                                  context.go('/broadcast/create');
+                                });
                               },
                               colorBtn: blueDefaultLight,
                             ),
@@ -124,7 +126,9 @@ class _BroadcastPagesState extends State<BroadcastPages> {
                             ButtonGlobal(
                               message: 'Tambah Broadcast',
                               onPressed: () {
-                                context.go('/broadcast/create');
+                                Router.neglect(context, () {
+                                  context.go('/broadcast/create');
+                                });
                               },
                               colorBtn: blueDefaultLight,
                             ),
@@ -244,7 +248,7 @@ class _BroadcastPagesState extends State<BroadcastPages> {
                                 context.read<BroadcastBloc>().add(
                                     BroadcastLoadedEvent(
                                         idCompany: accountData.idCompany!,
-                                        page: state.page,
+                                        page: 1,
                                         limit: int.parse(limit)));
                               },
                               onTapSort: (indexHeader, key) {},

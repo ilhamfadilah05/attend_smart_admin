@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 part of 'employee_bloc.dart';
 
 sealed class EmployeeEvent extends Equatable {
@@ -13,12 +15,30 @@ class EmployeeLoadedEvent extends EmployeeEvent {
   final String idCompany;
   final int page;
   final int limit;
+  String? searchName;
+  String? searchDepartment;
+  String? searchBranch;
+  String? workingStatus;
 
-  const EmployeeLoadedEvent(
-      {required this.idCompany, required this.page, required this.limit});
+  EmployeeLoadedEvent(
+      {required this.idCompany,
+      required this.page,
+      required this.limit,
+      this.searchName,
+      this.searchDepartment,
+      this.searchBranch,
+      this.workingStatus});
 
   @override
-  List<Object> get props => [idCompany, page, limit];
+  List<Object> get props => [
+        idCompany,
+        page,
+        limit,
+        searchName ?? '',
+        searchDepartment ?? '',
+        searchBranch ?? '',
+        workingStatus ?? ''
+      ];
 }
 
 class EmployeeDeleteEvent extends EmployeeEvent {

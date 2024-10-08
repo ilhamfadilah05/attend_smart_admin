@@ -70,7 +70,9 @@ class _CreateBroadcastPagesState extends State<CreateBroadcastPages> {
                       ? 'Berhasil merubah data broadcast!'
                       : 'Berhasil menambahkan data broadcast!',
                   title: 'Berhasil');
-              context.go('/broadcast/page');
+              Router.neglect(context, () {
+                context.go('/broadcast/page');
+              });
             } else if (state is CreateBroadcastErrorState) {
               alertNotification(
                   context: context, type: 'error', message: state.errorMessage);

@@ -158,7 +158,7 @@ class _SubmissionPagesState extends State<SubmissionPages> {
                           context.read<SubmissionBloc>().add(
                               SubmissionLoadedEvent(
                                   idCompany: accountData.idCompany!,
-                                  page: state.page,
+                                  page: 1,
                                   limit: int.parse(limit)));
                         },
                         onTapSort: (indexHeader, key) {},

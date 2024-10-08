@@ -299,33 +299,38 @@ class DataTableWidget extends StatelessWidget {
                                                     width: 10,
                                                   ),
                                                   isDelete == true
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            if (onTapDelete !=
-                                                                null) {
-                                                              onTapDelete!(
-                                                                  data['id']);
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
+                                                      ? data['is_central_branch'] ==
+                                                              true
+                                                          ? Container()
+                                                          : InkWell(
+                                                              onTap: () {
+                                                                if (onTapDelete !=
+                                                                    null) {
+                                                                  onTapDelete!(
+                                                                      data[
+                                                                          'id']);
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          5),
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
                                                                               5),
-                                                                  color: Colors
-                                                                      .red),
-                                                              child: const Icon(
-                                                                Iconsax
-                                                                    .trash_outline,
-                                                                color: Colors
-                                                                    .white,
-                                                                size: 17,
-                                                              )),
-                                                        )
+                                                                      color: Colors
+                                                                          .red),
+                                                                  child:
+                                                                      const Icon(
+                                                                    Iconsax
+                                                                        .trash_outline,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    size: 17,
+                                                                  )),
+                                                            )
                                                       : Container()
                                                 ],
                                               ),
@@ -498,7 +503,9 @@ class DataTableWidget extends StatelessWidget {
                                                                     : "Publish"
                                                                 : dataHeader.type == "double-key-date"
                                                                     ? "${DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.parse(data[dataHeader.key!.split(',')[0]]))} s/d ${DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.parse(data[dataHeader.key!.split(',')[1]]))}"
-                                                                    : "${data[dataHeader.key] ?? data[dataHeader.asKeyNull] ?? '-'}",
+                                                                    : dataHeader.type == "double-key-date-time"
+                                                                        ? "${DateFormat('dd/MM/yyyy', 'id_ID').format(DateTime.parse(data[dataHeader.key!.split(',')[0]]))}, ${data[dataHeader.key!.split(',')[1]]}"
+                                                                        : "${data[dataHeader.key] ?? data[dataHeader.asKeyNull] ?? '-'}",
                                                     fontSize: 12,
                                                     maxLines: 2,
                                                     textOverflow:

@@ -77,7 +77,9 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
                       ? 'Berhasil merubah data cabang!'
                       : 'Berhasil menambahkan data cabang!',
                   title: 'Berhasil');
-              context.go('/cabang/page');
+              Router.neglect(context, () {
+                context.go('/history/page');
+              });
             } else if (stateTheme is CreateHistoryAttendErrorState) {
               alertNotification(
                   context: context,
@@ -104,7 +106,7 @@ class _CreateHistoryAttendPagesState extends State<CreateHistoryAttendPages> {
                     height: 10,
                   ),
                   BreadCrumbGlobal(
-                    firstHref: '/history',
+                    firstHref: '/history/page',
                     firstTitle: 'Histori absensi',
                     typeBreadcrumb:
                         GoRouterState.of(context).uri.queryParameters['id'] ==
